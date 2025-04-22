@@ -33,7 +33,7 @@ public class RecyclingCompany {
     private String phone_number;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @NotEmpty(message = "Basic_activity must be not empty")
+    @NotEmpty(message = "Basic activity must be not empty")
     private String basic_activity;
 
     @Column(columnDefinition = "varchar(20) not null")

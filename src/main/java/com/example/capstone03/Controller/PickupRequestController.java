@@ -20,9 +20,9 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(pickupRequestService.getAllPickupRequests());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addPickupRequest(@RequestBody @Valid PickupRequest pickupRequest) {
-        pickupRequestService.addPickupRequest(pickupRequest);
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<?> addPickupRequest(@PathVariable Integer userId, @RequestBody @Valid PickupRequest pickupRequest) {
+        pickupRequestService.addPickupRequest(userId,pickupRequest);
         return ResponseEntity.status(200).body(new ApiResponse("Pickup request added successfully"));
     }
 

@@ -30,11 +30,19 @@ public class ContainerRequestService {
         if (user == null){
             throw new ApiException("user not found");
         }
+        List<ContainerRequest> requests = containerRequestRepository.findAll();
+        for (ContainerRequest request : requests){
+            if (request.getUser().getId().equals(userId)  && request.getStatus().equals("Pending")){
+                throw new ApiException("user have already requested a container");
+            }
+
+        }
 
         containerRequest.setRequest_date(LocalDate.now());
         containerRequest.setStatus("Pending");
         containerRequest.setDelivery_date(LocalDate.now().plusWeeks(1));
         containerRequest.setUser(user);
+
         containerRequestRepository.save(containerRequest);
     }
 
@@ -47,8 +55,7 @@ public class ContainerRequestService {
         }
 
         containerRequest.setUser(updatedContainerRequest.getUser());
-//        containerRequest.setCollector(updatedContainerRequest.getCollector());
-//        containerRequest.setContainer(updatedContainerRequest.getContainer());
+        containerRequest.setCollector(updatedContainerRequest.getCollector());
         containerRequest.setRequest_date(updatedContainerRequest.getRequest_date());
         containerRequest.setDelivery_date(updatedContainerRequest.getDelivery_date());
         containerRequest.setStatus(updatedContainerRequest.getStatus());
