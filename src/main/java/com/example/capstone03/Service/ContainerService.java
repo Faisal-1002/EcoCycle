@@ -29,7 +29,7 @@ public class ContainerService {
             throw new ApiException("user not found");
         }
 
-        Container container = new Container(null, containerDTO.getIs_Available(), user);
+        Container container = new Container(null, containerDTO.getIs_available(), user);
         containerRepository.save(container);
     }
 
@@ -41,7 +41,7 @@ public class ContainerService {
             throw new ApiException("Container not found");
         }
 
-        container.setIs_Available(containerDTO.getIs_Available());
+        container.setIs_available(containerDTO.getIs_available());
 
         containerRepository.save(container);
     }

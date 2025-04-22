@@ -14,7 +14,6 @@ public class ContainerDTO {
     private Integer user_id;
 
     @NotNull
-    private Boolean is_Available;
-
+    private Boolean is_available;
 
 }

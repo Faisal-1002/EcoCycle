@@ -42,7 +42,6 @@ public class Collector {
     @NotEmpty(message = "Phone number must not be empty")
     private String phone_number;
 
-
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
     private Set<ContainerRequest> container_Requests;
 
@@ -51,8 +50,4 @@ public class Collector {
 
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
     private Set<CompanyRequest> Company_Request;
-
-
-
-
 }
