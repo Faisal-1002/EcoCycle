@@ -75,4 +75,10 @@ public class PickupRequestService {
         }
         return pickupRequest;
     }
+
+    // endpoint 16 - View assigned pickup requests
+    public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
+        return pickupRequestRepository.findAllByCollectorId(collectorId);
+    }
+
 }
