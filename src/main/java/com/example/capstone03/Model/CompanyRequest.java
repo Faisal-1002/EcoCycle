@@ -26,13 +26,7 @@ public class CompanyRequest {
     @Column(columnDefinition = "int not null")
 
     @NotNull(message = "Recycler_Id number must be not empty")
-    private Integer recycler_Id;
-
-
-    @Column(columnDefinition = "int not null")
-
-    @NotNull(message = "Recycling_Company_Id number must be not empty")
-    private Integer recycling_Company_Id;
+    private Integer recycler_id;
 
 
     @Column(columnDefinition = "int not null")
@@ -42,10 +36,10 @@ public class CompanyRequest {
 
     @ManyToOne
     @JsonIgnore
-    private RecyclingCompany recyclingCompany;
+    private RecyclingCompany recycling_company;
 
 //    @ManyToOne
 //    @JsonIgnore
-//    private Recycler recyclers;
+//    private Collect collect;
 
 }

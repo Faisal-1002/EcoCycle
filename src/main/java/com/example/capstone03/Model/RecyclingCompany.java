@@ -28,25 +28,26 @@ public class RecyclingCompany {
     private String name;
 
 
-    @Column(columnDefinition = "varchar(20) not null")
+    @Column(columnDefinition = "varchar(10) not null")
 
+    @Pattern(regexp = "^05\\\\d{8}$" , message = "Contact_phone most be valid number")
     @NotEmpty(message = "Contact_phone must be not empty")
     private String contact_phone;
 
 
-    @Column(columnDefinition = "varchar(20) not null")
+    @Column(columnDefinition = "varchar(50) not null")
 
     @NotEmpty(message = "Basic_activity must be not empty")
     private String basic_activity;
 
 
-    @Column(columnDefinition = "varchar(20) not null")
+    @Column(columnDefinition = "varchar(10) not null")
 
     @NotEmpty(message = "zone must be not empty")
     private String zone;
 
 
-    @Column(columnDefinition = "varchar(20) not null")
+    @Column(columnDefinition = "varchar(30) not null")
 
     @NotEmpty(message = "email must be not empty")
     private String email;
@@ -57,14 +58,14 @@ public class RecyclingCompany {
     @NotEmpty(message = "password cannot be empty")
     private String password;
 
-    @Column(columnDefinition = "varchar(20) not null")
+    @Column(columnDefinition = "varchar(10) not null")
 
     @NotEmpty(message = "Declaration must be not empty")
     private String declaration;
 
-    private LocalDate Permit_expiration;
+    private LocalDate permit_expiration;
 
-    @OneToMany(cascade = CascadeType.ALL ,mappedBy = "recyclingCompany")
-    private Set<CompanyRequest>companyRequest;
+    @OneToMany(cascade = CascadeType.ALL ,mappedBy = "recycling_company")
+    private Set<CompanyRequest>company_request;
 
 }
