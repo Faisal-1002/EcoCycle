@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface ContainerRequestRepository extends JpaRepository<ContainerRequest, Integer> {
     ContainerRequest findContainerRequestById(Integer id);
-
+    List<ContainerRequest> findContainerRequestByStatus(String status);
 }

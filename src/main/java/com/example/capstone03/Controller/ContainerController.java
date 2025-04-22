@@ -29,8 +29,6 @@ public class ContainerController {
         return ResponseEntity.status(200).body(new ApiResponse("Container Added"));
     }
 
-
-
     @PutMapping("/update")
     public ResponseEntity updateContainerDTO(@RequestBody @Valid ContainerDTO containerDTO ){
         containerService.updateContainer(containerDTO);

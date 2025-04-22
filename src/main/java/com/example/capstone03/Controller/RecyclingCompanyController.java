@@ -36,6 +36,5 @@ public class RecyclingCompanyController {
     public ResponseEntity deleteCoffee(@PathVariable Integer id){
         recyclingCompanyService.deleteRecyclingCompany(id);
         return ResponseEntity.ok(new ApiResponse("delete successfully"));
-
     }
 }

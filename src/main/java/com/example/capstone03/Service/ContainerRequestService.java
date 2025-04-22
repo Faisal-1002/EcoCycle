@@ -80,4 +80,9 @@ public class ContainerRequestService {
         }
         return containerRequest;
     }
+
+    //endpoint 13 - View all container requests
+    public List<ContainerRequest> getPendingRequests() {
+        return containerRequestRepository.findContainerRequestByStatus("Pending");
+    }
 }
