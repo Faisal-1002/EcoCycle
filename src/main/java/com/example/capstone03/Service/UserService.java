@@ -27,7 +27,6 @@ public class UserService {
         if (user == null) {
             throw new ApiException("User not found");
         }
-
         user.setName(updatedUser.getName());
         user.setEmail(updatedUser.getEmail());
         user.setPassword(updatedUser.getPassword());
@@ -54,4 +53,6 @@ public class UserService {
         }
         return user;
     }
+
+
 }

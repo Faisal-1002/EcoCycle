@@ -34,7 +34,6 @@ public class CollectorController {
     }
 
 
-
     @PutMapping("/update/{id}")
     public ResponseEntity updateCollector(@PathVariable Integer id, @RequestBody @Valid Collector collector ){
         collectorService.updateCollector(id,collector);

@@ -25,7 +25,6 @@ public class CompanyRequestService {
         if (recyclingCompany == null){
             throw new ApiException("recycling company is not found");
         }
-        companyRequest.setId(companyRequest.getId());
         companyRequestRepository.save(companyRequest);
 
     }
