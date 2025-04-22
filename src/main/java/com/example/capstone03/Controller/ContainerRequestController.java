@@ -3,6 +3,7 @@ package com.example.capstone03.Controller;
 import com.example.capstone03.Api.ApiResponse;
 import com.example.capstone03.Model.ContainerRequest;
 import com.example.capstone03.Service.ContainerRequestService;
+import com.example.capstone03.Service.ContainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,14 +18,15 @@ public class ContainerRequestController {
 
     private final ContainerRequestService containerRequestService;
 
+
     @GetMapping("/get")
     public ResponseEntity<?> getAllContainerRequests() {
         return ResponseEntity.status(200).body(containerRequestService.getAllContainerRequests());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addContainerRequest(@RequestBody @Valid ContainerRequest containerRequest) {
-        containerRequestService.addContainerRequest(containerRequest);
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<?> addContainerRequest(@PathVariable Integer userId ,@RequestBody @Valid ContainerRequest containerRequest) {
+        containerRequestService.assignContainerRequest(userId,containerRequest);
         return ResponseEntity.status(200).body(new ApiResponse("Container request added successfully"));
     }
 
