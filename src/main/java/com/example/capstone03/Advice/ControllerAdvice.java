@@ -13,6 +13,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -88,6 +89,13 @@ public class ControllerAdvice {
     public ResponseEntity<ApiResponse> MethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         String msg = e.getMessage();
         return ResponseEntity.status(400).body(new ApiResponse(msg));
+    }
+
+
+    @ExceptionHandler(value = NoResourceFoundException.class)
+    public ResponseEntity NoResourceFoundException(NoResourceFoundException noResourceFoundException){
+        String message=noResourceFoundException.getMessage();
+        return ResponseEntity.status(400).body(message);
     }
 
 }
