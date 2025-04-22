@@ -41,7 +41,7 @@ public class ContainerService {
             throw new ApiException("Container not found");
         }
 
-        container.setIs_Available(containerDTO.getIs_Available());
+        container.setIs_available(containerDTO.getIs_Available());
 
         containerRepository.save(container);
     }
