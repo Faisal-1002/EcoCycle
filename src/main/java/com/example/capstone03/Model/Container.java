@@ -12,7 +12,6 @@ import lombok.*;
 @Entity
 
 public class Container {
-
     @Id
     private Integer id;
 
