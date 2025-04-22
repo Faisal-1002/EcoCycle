@@ -15,6 +15,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -133,4 +134,38 @@ public class ContainerRequestService {
     public List<ContainerRequest> getPendingRequests() {
         return containerRequestRepository.findContainerRequestByStatus("Pending");
     }
+
+    //endpoint 14 -  Accept container request
+    public void acceptContainerRequest(Integer requestId) {
+        ContainerRequest request = containerRequestRepository.findContainerRequestById(requestId);
+
+        if (request == null) {
+            throw new ApiException("Container request not found");
+        }
+        if (!request.getStatus().equalsIgnoreCase("Pending")) {
+            throw new RuntimeException("Only pending requests can be accepted");
+        }
+
+        request.setStatus("cancelled");
+        containerRequestRepository.save(request);
+    }
+
+    // endpoint 15 - Deliver container (update status and delivery date)//faisal
+//    public void deliverContainer(Integer requestId) {
+//        ContainerRequest request = containerRequestRepository.findById(requestId);
+//        if (request == null) {
+//            throw new ApiException("Container request not found");
+//        }
+//        if (!request.getStatus().equalsIgnoreCase("Accepted")) {
+//            throw new RuntimeException("Only accepted requests can be delivered");
+//        }
+//
+//        request.setStatus("delivered");
+//        request.setDelivery_date(LocalDateTime.now());
+//
+//        containerRequestRepository.save(request);
+//    }
+
+
+
 }

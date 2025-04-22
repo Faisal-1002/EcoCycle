@@ -50,4 +50,10 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted successfully"));
     }
 
+    // endpoint 16 - View assigned pickup requests
+    @GetMapping("/assigned/{collectorId}")
+    public ResponseEntity getAssignedPickupRequests(@PathVariable Integer collectorId) {
+        return ResponseEntity.ok(pickupRequestService.getAssignedPickupRequests(collectorId));
+    }
+
 }
