@@ -18,7 +18,6 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecyclingCompany {
-
     @Id
     private Integer id;
 
@@ -56,5 +55,4 @@ public class RecyclingCompany {
 
     @OneToMany(cascade = CascadeType.ALL ,mappedBy = "recycling_company")
     private Set<CompanyRequest>company_request;
-
 }

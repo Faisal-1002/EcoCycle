@@ -14,14 +14,14 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 public class CompanyRequest {
-
     @Id
     private Integer id;
 
     @Column(columnDefinition = "int not null")
     @NotNull(message = "Recycler_Id number must be not empty")
-    private Integer recycler_Id;
-  
+    private Integer recycler_id;
+
+
     @Column(columnDefinition = "int not null")
     @NotNull(message = "quantity must be not empty")
     private Integer quantity;
@@ -34,5 +34,4 @@ public class CompanyRequest {
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
     @JsonIgnore
     private Collector collector;
-
 }
