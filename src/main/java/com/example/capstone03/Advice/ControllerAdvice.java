@@ -19,7 +19,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 
 public class ControllerAdvice {
 
-    // Our Exception
+
     @ExceptionHandler(value = ApiException.class)
     public ResponseEntity ApiException(ApiException e){
         String message=e.getMessage();
