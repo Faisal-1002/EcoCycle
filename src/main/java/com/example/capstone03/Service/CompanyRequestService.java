@@ -5,6 +5,7 @@ import com.example.capstone03.Model.CompanyRequest;
 import com.example.capstone03.Model.PickupRequest;
 import com.example.capstone03.Model.RecyclingCompany;
 import com.example.capstone03.Model.User;
+import com.example.capstone03.Model.RecyclingCompany;
 import com.example.capstone03.Repository.CompanyRequestRepository;
 import com.example.capstone03.Repository.RecyclingCompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,11 @@ public class CompanyRequestService {
     }
 
     public void addCompanyRequest(CompanyRequest companyRequest){
+        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(companyRequest.getRecycling_company().getId());
+
+        if (recyclingCompany == null){
+            throw new ApiException("recycling company is not found");
+        }
         companyRequest.setId(companyRequest.getId());
         companyRequestRepository.save(companyRequest);
 

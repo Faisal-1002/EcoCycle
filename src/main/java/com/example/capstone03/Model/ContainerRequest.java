@@ -3,15 +3,14 @@ package com.example.capstone03.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContainerRequest {
@@ -20,7 +19,7 @@ public class ContainerRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "date not null")
+    @Column(columnDefinition = "date")
     private LocalDate request_date;
 
     @Column(columnDefinition = "date")
@@ -41,6 +40,4 @@ public class ContainerRequest {
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
     @JsonIgnore
     private Collector collector;
-
-
 }

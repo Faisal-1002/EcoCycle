@@ -17,10 +17,10 @@ public class RecyclingCompanyService {
     public List<RecyclingCompany> getAllRecyclingCompany(){
         return recyclingCompanyRepository.findAll();
     }
+
     public void addRecyclingCompany(RecyclingCompany recyclingCompany){
         recyclingCompany.setId(recyclingCompany.getId());
         recyclingCompanyRepository.save(recyclingCompany);
-
     }
 
     public void updateRecyclingCompany(Integer id , RecyclingCompany recyclingCompany){
@@ -32,11 +32,10 @@ public class RecyclingCompanyService {
         oldRecyclingCompany.setName(recyclingCompany.getName());
         oldRecyclingCompany.setEmail(recyclingCompany.getEmail());
         oldRecyclingCompany.setPassword(recyclingCompany.getPassword());
-        oldRecyclingCompany.setDeclaration(recyclingCompany.getDeclaration());
+        oldRecyclingCompany.setCertification(recyclingCompany.getCertification());
         oldRecyclingCompany.setBasic_activity(recyclingCompany.getBasic_activity());
         oldRecyclingCompany.setPhone_number(recyclingCompany.getPhone_number());
         oldRecyclingCompany.setPermit_expiration(recyclingCompany.getPermit_expiration());
-
 
         recyclingCompanyRepository.save(oldRecyclingCompany);
     }
