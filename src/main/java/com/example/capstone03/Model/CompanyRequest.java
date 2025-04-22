@@ -1,17 +1,12 @@
 package com.example.capstone03.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
@@ -19,18 +14,15 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 public class CompanyRequest {
-
     @Id
     private Integer id;
 
     @Column(columnDefinition = "int not null")
-
     @NotNull(message = "Recycler_Id number must be not empty")
     private Integer recycler_id;
 
 
     @Column(columnDefinition = "int not null")
-
     @NotNull(message = "quantity must be not empty")
     private Integer quantity;
 
@@ -38,8 +30,8 @@ public class CompanyRequest {
     @JsonIgnore
     private RecyclingCompany recycling_company;
 
-//    @ManyToOne
-//    @JsonIgnore
-//    private Collect collect;
-
+    @ManyToOne
+    @JoinColumn(name = "collector_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Collector collector;
 }
