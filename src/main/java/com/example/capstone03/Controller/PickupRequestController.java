@@ -42,4 +42,11 @@ public class PickupRequestController {
     public ResponseEntity<?> getPickupRequestById(@PathVariable Integer id) {
         return ResponseEntity.status(200).body(pickupRequestService.getPickupRequestById(id));
     }
+
+    // endpoint 16 - View assigned pickup requests
+    @GetMapping("/assigned/{collectorId}")
+    public ResponseEntity getAssignedPickupRequests(@PathVariable Integer collectorId) {
+        return ResponseEntity.ok(pickupRequestService.getAssignedPickupRequests(collectorId));
+    }
+
 }

@@ -58,4 +58,15 @@ public class ContainerRequestController {
     public ResponseEntity getAllPendingRequests() {
         return ResponseEntity.ok(containerRequestService.getPendingRequests());
     }
+
+    //endpoint 14 -  Accept container request
+    @PutMapping("/update-status/{id}")
+    public ResponseEntity<String> acceptContainerRequest(@PathVariable Integer id) {
+        containerRequestService.acceptContainerRequest(id);
+        return ResponseEntity.ok("Container request accepted successfully");
+    }
+
+
+
+
 }
