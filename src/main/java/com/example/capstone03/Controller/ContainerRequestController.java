@@ -3,10 +3,13 @@ package com.example.capstone03.Controller;
 import com.example.capstone03.Api.ApiResponse;
 import com.example.capstone03.Model.ContainerRequest;
 import com.example.capstone03.Service.ContainerRequestService;
+import com.example.capstone03.Service.ContainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/container-request")
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class ContainerRequestController {
 
     private final ContainerRequestService containerRequestService;
+
 
     @GetMapping("/get")
     public ResponseEntity<?> getAllContainerRequests() {
@@ -49,4 +53,9 @@ public class ContainerRequestController {
         return ResponseEntity.status(200).body(new ApiResponse("Container delivered and assigned successfully"));
     }
 
+    //endpoint 13 - View all container requests
+    @GetMapping("/get-status")
+    public ResponseEntity getAllPendingRequests() {
+        return ResponseEntity.ok(containerRequestService.getPendingRequests());
+    }
 }

@@ -26,6 +26,13 @@ public class RecycleItemController {
         return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully"));
     }
 
+    // 10. System awards points (1kg = 1 point) - automatic
+    @PostMapping("/add-point")
+    public ResponseEntity addRecycleItemToPickupRequest(@RequestBody @Valid Integer pickupRequestId, RecycleItem recycleItem) {
+        recycleItemService.addRecycleItemToPickupRequest(pickupRequestId,recycleItem);
+        return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully and get points"));
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<?> updateRecycleItem(@PathVariable Integer id, @RequestBody @Valid RecycleItem recycleItem) {
         recycleItemService.updateRecycleItem(id, recycleItem);
@@ -42,4 +49,12 @@ public class RecycleItemController {
     public ResponseEntity<?> getRecycleItemById(@PathVariable Integer id) {
         return ResponseEntity.status(200).body(recycleItemService.getRecycleItemById(id));
     }
+
+    //endpoint 12 - User can view points history
+    @GetMapping("/get/{userId}")
+    public ResponseEntity getPointsHistory(@PathVariable Integer userId) {
+        return ResponseEntity.ok(recycleItemService.getPointsHistory(userId));
+    }
+
+
 }

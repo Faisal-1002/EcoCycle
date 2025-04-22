@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -28,8 +29,20 @@ public class ControllerAdvice {
         return ResponseEntity.status(400).body(message);
     }
 
+    @ExceptionHandler(value = NullPointerException.class)
+    public ResponseEntity<ApiResponse> NullPointerException(NullPointerException e){
+        String msg = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
+    }
+
     @ExceptionHandler(value = JpaSystemException.class)
     public ResponseEntity<ApiResponse> JpaSystemException(JpaSystemException e){
+        String msg = e.getMessage();
+        return ResponseEntity.status(400).body(new ApiResponse(msg));
+    }
+
+    @ExceptionHandler(value = ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ApiResponse> ObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException e) {
         String msg = e.getMessage();
         return ResponseEntity.status(400).body(new ApiResponse(msg));
     }

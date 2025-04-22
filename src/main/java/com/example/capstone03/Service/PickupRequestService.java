@@ -1,11 +1,15 @@
 package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
+import com.example.capstone03.Model.ContainerRequest;
 import com.example.capstone03.Model.PickupRequest;
+import com.example.capstone03.Model.User;
 import com.example.capstone03.Repository.PickupRequestRepository;
+import com.example.capstone03.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -13,12 +17,30 @@ import java.util.List;
 public class PickupRequestService {
 
     private final PickupRequestRepository pickupRequestRepository;
+    private final UserRepository userRepository;
 
     public List<PickupRequest> getAllPickupRequests() {
         return pickupRequestRepository.findAll();
     }
 
-    public void addPickupRequest(PickupRequest pickupRequest) {
+    public void addPickupRequest(Integer userId,PickupRequest pickupRequest) {
+        User user = userRepository.findUserById(userId);
+
+        if (user == null){
+            throw new ApiException("user not found");
+        }
+
+        List<PickupRequest> requests = pickupRequestRepository.findAll();
+        for (PickupRequest request : requests){
+            if (request.getUser().getId().equals(userId)  && request.getStatus().equals("Requested")){
+                throw new ApiException("user have already requested a pick up");
+            }
+        }
+
+        pickupRequest.setUser(user);
+        pickupRequest.setRequest_date(LocalDate.now());
+        pickupRequest.setPickup_date(LocalDate.now().plusDays(1));
+        pickupRequest.setStatus("Requested");
         pickupRequestRepository.save(pickupRequest);
     }
 

@@ -84,5 +84,10 @@ public class ContainerRequestService {
 
         container.setIs_available(false);
         containerRepository.save(container);
-    }
+  }
+
+    //endpoint 13 - View all container requests
+  public List<ContainerRequest> getPendingRequests() {
+      return containerRequestRepository.findContainerRequestByStatus("Pending");
+  }
 }
