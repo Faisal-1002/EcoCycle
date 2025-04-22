@@ -34,7 +34,7 @@ public class RecyclingCompanyService {
         oldRecyclingCompany.setPassword(recyclingCompany.getPassword());
         oldRecyclingCompany.setDeclaration(recyclingCompany.getDeclaration());
         oldRecyclingCompany.setBasic_activity(recyclingCompany.getBasic_activity());
-        oldRecyclingCompany.setContact_phone(recyclingCompany.getContact_phone());
+        oldRecyclingCompany.setPhone_number(recyclingCompany.getPhone_number());
         oldRecyclingCompany.setPermit_expiration(recyclingCompany.getPermit_expiration());
 
 
