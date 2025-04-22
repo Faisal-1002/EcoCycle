@@ -43,6 +43,13 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(pickupRequestService.getPickupRequestById(id));
     }
 
+    @PutMapping("/update/{pickupRequestId}/{collectorId}")
+    public ResponseEntity<?> acceptPickupRequest(@PathVariable Integer pickupRequestId,
+                                                 @PathVariable Integer collectorId) {
+        pickupRequestService.acceptPickupRequest(pickupRequestId, collectorId);
+        return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted successfully"));
+    }
+
     // endpoint 16 - View assigned pickup requests
     @GetMapping("/assigned/{collectorId}")
     public ResponseEntity getAssignedPickupRequests(@PathVariable Integer collectorId) {

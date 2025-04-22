@@ -47,10 +47,22 @@ public class ContainerRequestController {
         return ResponseEntity.status(200).body(containerRequestService.getContainerRequestById(id));
     }
 
-    @PutMapping("/deliver/{containerRequestId}")
-    public ResponseEntity<?> deliverContainer(@PathVariable Integer containerRequestId) {
-        containerRequestService.deliverContainer(containerRequestId);
+    @PostMapping("/container-request/{userId}")
+    public ResponseEntity<?> notifyContainerRequestReceived(@PathVariable Integer userId) {
+        containerRequestService.sendContainerRequestReceivedEmail(userId);
+        return ResponseEntity.status(200).body(new ApiResponse("Container request notification sent successfully"));
+    }
+
+    @PutMapping("/deliver/collector-id/{collectorId}/container-request-id/{containerRequestId}")
+    public ResponseEntity<?> deliverContainer(@PathVariable Integer collectorId, @PathVariable Integer containerRequestId) {
+        containerRequestService.deliverContainer(collectorId, containerRequestId);
         return ResponseEntity.status(200).body(new ApiResponse("Container delivered and assigned successfully"));
+    }
+
+    @PostMapping("/container-delivered/{userId}")
+    public ResponseEntity<?> notifyContainerDelivered(@PathVariable Integer userId) {
+        containerRequestService.notifyContainerDelivered(userId);
+        return ResponseEntity.status(200).body(new ApiResponse("Container delivery notification sent successfully"));
     }
 
     //endpoint 13 - View all container requests

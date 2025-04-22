@@ -24,8 +24,14 @@ public class RecycleItemService {
         return recycleItemRepository.findAll();
     }
 
-    public void addRecycleItem(RecycleItem recycleItem) {
+    //9. Add recycle Items when collecting
+    public void addRecycleItem(Integer pickupRequestId, RecycleItem recycleItem) {
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
+        if (pickupRequest == null) {
+            throw new ApiException("Pickup request not found");
+        }
 
+        recycleItem.setPickup_request(pickupRequest);
         recycleItemRepository.save(recycleItem);
     }
 
