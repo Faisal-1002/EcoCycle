@@ -17,10 +17,10 @@ public class RecyclingCompanyService {
     public List<RecyclingCompany> getAllRecyclingCompany(){
         return recyclingCompanyRepository.findAll();
     }
+
     public void addRecyclingCompany(RecyclingCompany recyclingCompany){
         recyclingCompany.setId(recyclingCompany.getId());
         recyclingCompanyRepository.save(recyclingCompany);
-
     }
 
     public void updateRecyclingCompany(Integer id , RecyclingCompany recyclingCompany){
