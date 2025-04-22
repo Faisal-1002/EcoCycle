@@ -15,7 +15,7 @@ public class Container {
     @Id
     private Integer id;
 
-    @NotNull
+    @Column(columnDefinition = "boolean")
     private Boolean is_available;
 
     @OneToOne

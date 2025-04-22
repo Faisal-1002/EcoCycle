@@ -26,7 +26,6 @@ public class RecycleItem {
 
     @ManyToOne
     @JoinColumn(name = "pickup_request_id", referencedColumnName = "id")
-    @NotNull(message = "Pickup request must not be null")
     @JsonIgnore
     private PickupRequest pickup_request;
 }
