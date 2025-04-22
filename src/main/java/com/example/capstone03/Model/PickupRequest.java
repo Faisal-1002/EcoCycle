@@ -43,7 +43,8 @@ public class PickupRequest {
     @OneToMany(mappedBy = "pickup_request", cascade = CascadeType.ALL)
     private List<RecycleItem> recycleItems;
 
-//    @ManyToOne
-//    @JoinColumn(name = "collector_id", referencedColumnName = "id")
-//    private Recycler recycler;
+    @ManyToOne
+    @JoinColumn(name = "collector_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Collector collector;
 }

@@ -3,18 +3,22 @@ package com.example.capstone03.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
-@Entity
-@Setter
+
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
+@Entity
+
+public class Collector {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,11 +34,6 @@ public class User {
     @Email(message = "Email must be valid")
     private String email;
 
-    @Column(columnDefinition = "varchar(100) not null")
-    @NotEmpty(message = "Password must not be empty")
-    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
-    private String password;
-
     @Column(columnDefinition = "varchar(255) not null")
     @NotEmpty(message = "Address must not be empty")
     private String address;
@@ -43,19 +42,17 @@ public class User {
     @NotEmpty(message = "Phone number must not be empty")
     private String phone_number;
 
-    @Column(columnDefinition = "int not null default 0")
-    @NotNull(message = "Points must not be null")
-    private Integer points;
+
+    @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
+    private Set<ContainerRequest> container_Requests;
+
+    @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
+    private Set<PickupRequest> Pickup_Request;
+
+    @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
+    private Set<CompanyRequest> Company_Request;
 
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<ContainerRequest> containerRequests;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<PickupRequest> pickupRequests;
 
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    @PrimaryKeyJoinColumn
-    private Container container;
 }

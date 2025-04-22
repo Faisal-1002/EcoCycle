@@ -39,11 +39,10 @@ public class ContainerRequest {
     @JsonIgnore
     private User user;
 
-//    @ManyToOne
-//    @JoinColumn(name = "collector_id", referencedColumnName = "id")
-//    private Recycler collector;
-//
-//    @ManyToOne
-//    @JoinColumn(name = "container_id", referencedColumnName = "id")
-//    private Container container;
+    @ManyToOne
+    @JoinColumn(name = "collector_id", referencedColumnName = "id")
+    @JsonIgnore
+    private Collector collector;
+
+
 }
