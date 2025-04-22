@@ -31,16 +31,15 @@ public class ContainerController {
 
 
 
-    @PutMapping("/update/{containerDTO}")
-    public ResponseEntity updateContainerDTO(@PathVariable ContainerDTO containerDTO ){
+    @PutMapping("/update")
+    public ResponseEntity updateContainerDTO(@RequestBody @Valid ContainerDTO containerDTO ){
         containerService.updateContainer(containerDTO);
         return ResponseEntity.status(200).body(new ApiResponse("Container updated"));
-
     }
 
-    @DeleteMapping("/delete/{containerDTO}")
-    public ResponseEntity deleteContainerDTO(@PathVariable ContainerDTO containerDTO ){
-        containerService.deleteContainer(containerDTO);
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity deleteContainerId(@PathVariable Integer id){
+        containerService.deleteContainer(id);
         return ResponseEntity.status(200).body(new ApiResponse("Container deleted"));
     }
 

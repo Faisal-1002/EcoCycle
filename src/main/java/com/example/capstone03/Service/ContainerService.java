@@ -47,13 +47,13 @@ public class ContainerService {
     }
 
 
-    public void deleteContainer(ContainerDTO containerDTO){
-        Container container = containerRepository.findContainerById(containerDTO.getUser_id());
+    public void deleteContainer(Integer id){
+        Container container = containerRepository.findContainerById(id);
         if(container == null){
             throw new ApiException("Container not found");
         }
 
-        containerRepository.save(container);
+        containerRepository.delete(container);
     }
 
 

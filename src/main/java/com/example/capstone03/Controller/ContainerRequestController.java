@@ -20,9 +20,9 @@ public class ContainerRequestController {
         return ResponseEntity.status(200).body(containerRequestService.getAllContainerRequests());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addContainerRequest(@RequestBody @Valid ContainerRequest containerRequest) {
-        containerRequestService.addContainerRequest(containerRequest);
+    @PostMapping("/add/{userId}")
+    public ResponseEntity<?> addContainerRequest(@PathVariable Integer userId ,@RequestBody @Valid ContainerRequest containerRequest) {
+        containerRequestService.assignContainerRequest(userId,containerRequest);
         return ResponseEntity.status(200).body(new ApiResponse("Container request added successfully"));
     }
 
