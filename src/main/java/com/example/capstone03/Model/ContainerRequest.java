@@ -3,10 +3,9 @@ package com.example.capstone03.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -25,8 +24,8 @@ public class ContainerRequest {
     @Column(columnDefinition = "date")
     private LocalDate delivery_date;
 
-    @Column(columnDefinition = "varchar(20) not null")
-    @NotNull(message = "Status must not be null")
+    @Column(columnDefinition = "varchar(20)")
+    @Pattern(regexp = "^(pending|delivered|rejected|cancelled)")
     private String status;
 
     @Column(columnDefinition = "varchar(255)")
@@ -41,4 +40,8 @@ public class ContainerRequest {
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
     @JsonIgnore
     private Collector collector;
+
+    @ManyToOne
+    @JoinColumn(name = "container_id", referencedColumnName = "id")
+    private Container container;
 }

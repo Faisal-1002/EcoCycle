@@ -22,7 +22,7 @@ public class ContainerRequestController {
 
     @PostMapping("/add/{userId}")
     public ResponseEntity<?> addContainerRequest(@PathVariable Integer userId ,@RequestBody @Valid ContainerRequest containerRequest) {
-        containerRequestService.assignContainerRequest(userId,containerRequest);
+        containerRequestService.addContainerRequest(userId,containerRequest);
         return ResponseEntity.status(200).body(new ApiResponse("Container request added successfully"));
     }
 
@@ -42,4 +42,11 @@ public class ContainerRequestController {
     public ResponseEntity<?> getContainerRequestById(@PathVariable Integer id) {
         return ResponseEntity.status(200).body(containerRequestService.getContainerRequestById(id));
     }
+
+    @PutMapping("/deliver/{containerRequestId}")
+    public ResponseEntity<?> deliverContainer(@PathVariable Integer containerRequestId) {
+        containerRequestService.deliverContainer(containerRequestId);
+        return ResponseEntity.status(200).body(new ApiResponse("Container delivered and assigned successfully"));
+    }
+
 }

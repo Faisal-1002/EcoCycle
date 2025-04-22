@@ -46,15 +46,9 @@ public class User {
     @NotNull(message = "Points must not be null")
     private Integer points;
 
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<ContainerRequest> containerRequests;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PickupRequest> pickupRequests;
-
-
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
-    @PrimaryKeyJoinColumn
-    private Container container;
 }

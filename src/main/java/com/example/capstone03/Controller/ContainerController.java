@@ -1,8 +1,7 @@
 package com.example.capstone03.Controller;
 
-
 import com.example.capstone03.Api.ApiResponse;
-import com.example.capstone03.DTO.ContainerDTO;
+import com.example.capstone03.Model.Container;
 import com.example.capstone03.Service.ContainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,23 +16,20 @@ public class ContainerController {
 
     private final ContainerService containerService;
 
-
     @GetMapping("/get")
     public ResponseEntity getContainer(){
         return ResponseEntity.status(200).body(containerService.getAllContainers());
     }
 
     @PostMapping("/add")
-    public ResponseEntity addContainer(@RequestBody @Valid ContainerDTO containerDTO){
-        containerService.addContainer(containerDTO);
+    public ResponseEntity addContainer(@RequestBody @Valid Container container){
+        containerService.addContainer(container);
         return ResponseEntity.status(200).body(new ApiResponse("Container Added"));
     }
 
-
-
-    @PutMapping("/update")
-    public ResponseEntity updateContainerDTO(@RequestBody @Valid ContainerDTO containerDTO ){
-        containerService.updateContainer(containerDTO);
+    @PutMapping("/update/{id}")
+    public ResponseEntity updateContainerDTO(@PathVariable Integer id, @RequestBody @Valid Container container){
+        containerService.updateContainer(id, container);
         return ResponseEntity.status(200).body(new ApiResponse("Container updated"));
     }
 
@@ -43,5 +39,9 @@ public class ContainerController {
         return ResponseEntity.status(200).body(new ApiResponse("Container deleted"));
     }
 
+    @GetMapping("/get/{containerId}")
+    public ResponseEntity<?> getContainerById(@PathVariable Integer containerId) {
+        return ResponseEntity.status(200).body(containerService.getContainerById(containerId));
+    }
 
 }
