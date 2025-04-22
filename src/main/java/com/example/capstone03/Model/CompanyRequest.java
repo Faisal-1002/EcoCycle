@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -21,22 +19,16 @@ public class CompanyRequest {
     private Integer id;
 
     @Column(columnDefinition = "int not null")
-
     @NotNull(message = "Recycler_Id number must be not empty")
     private Integer recycler_Id;
-
-
-
-
-
+  
     @Column(columnDefinition = "int not null")
-
     @NotNull(message = "quantity must be not empty")
     private Integer quantity;
 
     @ManyToOne
     @JsonIgnore
-    private RecyclingCompany recyclingCompany;
+    private RecyclingCompany recycling_company;
 
     @ManyToOne
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
