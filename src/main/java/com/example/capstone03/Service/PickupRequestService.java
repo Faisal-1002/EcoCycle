@@ -1,15 +1,23 @@
 package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
+import com.example.capstone03.Model.Collector;
 import com.example.capstone03.Model.ContainerRequest;
 import com.example.capstone03.Model.PickupRequest;
 import com.example.capstone03.Model.User;
+import com.example.capstone03.Repository.CollectorRepository;
+import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.PickupRequestRepository;
 import com.example.capstone03.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -18,49 +26,40 @@ public class PickupRequestService {
 
     private final PickupRequestRepository pickupRequestRepository;
     private final UserRepository userRepository;
+    private final ContainerRequestRepository containerRequestRepository;
+    private final CollectorRepository collectorRepository;
+    private final JavaMailSender mailSender;
 
     public List<PickupRequest> getAllPickupRequests() {
         return pickupRequestRepository.findAll();
     }
 
-    public void addPickupRequest(Integer userId,PickupRequest pickupRequest) {
+    //5. Request pickup manually
+    public void addPickupRequest(Integer userId, PickupRequest pickupRequest) {
         User user = userRepository.findUserById(userId);
-
-        if (user == null){
-            throw new ApiException("user not found");
-        }
-
-        List<PickupRequest> requests = pickupRequestRepository.findAll();
-        for (PickupRequest request : requests){
-            if (request.getUser().getId().equals(userId)  && request.getStatus().equals("Requested")){
-                throw new ApiException("user have already requested a pick up");
-            }
+        if (user == null) {
+            throw new ApiException("User not found");
         }
 
         pickupRequest.setUser(user);
-        pickupRequest.setRequest_date(LocalDate.now());
+        pickupRequest.setRequest_date(LocalDateTime.now());
+        pickupRequest.setStatus("requested");
         pickupRequest.setPickup_date(LocalDate.now().plusDays(1));
-        pickupRequest.setStatus("Requested");
         pickupRequestRepository.save(pickupRequest);
+        notifyPickupScheduled(userId, pickupRequest.getPickup_date());
     }
 
-    public void updatePickupRequest(Integer id, PickupRequest updatedPickupRequest) {
-        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(id);
+    public void updatePickupRequest(Integer pickupRequestId, PickupRequest updatedPickupRequest) {
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
             throw new ApiException("Pickup request not found");
         }
-
-        pickupRequest.setUser(updatedPickupRequest.getUser());
-//        pickupRequest.setCollector(updatedPickupRequest.getCollector_id());
-        pickupRequest.setRequest_date(updatedPickupRequest.getRequest_date());
         pickupRequest.setPickup_date(updatedPickupRequest.getPickup_date());
-        pickupRequest.setStatus(updatedPickupRequest.getStatus());
-
         pickupRequestRepository.save(pickupRequest);
     }
 
-    public void deletePickupRequest(Integer id) {
-        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(id);
+    public void deletePickupRequest(Integer pickupRequestId) {
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
             throw new ApiException("Pickup request not found");
         }
@@ -68,11 +67,90 @@ public class PickupRequestService {
         pickupRequestRepository.delete(pickupRequest);
     }
 
-    public PickupRequest getPickupRequestById(Integer id) {
-        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(id);
+    public PickupRequest getPickupRequestById(Integer pickupRequestId) {
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
             throw new ApiException("Pickup request not found");
         }
         return pickupRequest;
     }
+
+    //6. Auto pickup request if 7 days passes with no manual request
+    @Scheduled(cron = "0 0 0 * * ?")
+    public void autoCreatePickupRequestsAfter7Days() {
+        List<ContainerRequest> deliveredContainers = containerRequestRepository.findAllByStatus("delivered");
+
+        for (ContainerRequest containerRequest : deliveredContainers) {
+            User user = containerRequest.getUser();
+
+            // Get all pickup requests for this user
+            List<PickupRequest> pickupRequests = pickupRequestRepository.findByUserId(user.getId());
+
+            boolean hasActivePickup = false;
+
+            for (PickupRequest pickupRequest : pickupRequests) {
+                if (!"delivered".equals(pickupRequest.getStatus())) {
+                    hasActivePickup = true;
+                    break;
+                }
+            }
+
+            if (!hasActivePickup) {
+                // Check if 7 days passed since delivery date
+                if (containerRequest.getDelivery_date() != null &&
+                        ChronoUnit.DAYS.between(containerRequest.getDelivery_date(), LocalDate.now()) >= 7) {
+
+                    PickupRequest autoPickupRequest = new PickupRequest();
+                    autoPickupRequest.setUser(user);
+                    autoPickupRequest.setRequest_date(LocalDateTime.now());
+                    autoPickupRequest.setStatus("auto_requested");
+                    autoPickupRequest.setPickup_date(LocalDate.now().plusDays(1));
+
+                    pickupRequestRepository.save(autoPickupRequest);
+                    notifyPickupScheduled(user.getId(), autoPickupRequest.getPickup_date());
+                }
+            }
+        }
+    }
+
+    //7. Notify scheduled pickup
+    public void notifyPickupScheduled(Integer userId, LocalDate pickup_date) {
+        User user = userRepository.findUserById(userId);
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Pickup Scheduled");
+        message.setText("Dear " + user.getName() + ",\n\nWe have scheduled a pickup for your recyclable materials which is " + pickup_date + ". Please prepare them for collection.\n\nThank you for your commitment to recycling!");
+        message.setFrom("faisal.a.m.2012@gmail.com");
+
+        mailSender.send(message);
+    }
+
+    //8. Close pickup request
+    public void acceptPickupRequest(Integer pickupRequestId, Integer collectorId) {
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
+        if (pickupRequest == null) {
+            throw new ApiException("Pickup request not found");
+        }
+
+        if (!"requested".equals(pickupRequest.getStatus()) && !"auto_requested".equals(pickupRequest.getStatus())) {
+            throw new ApiException("Only requested or auto-requested pickups can be accepted");
+        }
+
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+        if (collector == null) {
+            throw new ApiException("Collector not found");
+        }
+
+        pickupRequest.setCollector(collector);
+        pickupRequest.setPickup_date(LocalDate.now());
+        pickupRequest.setStatus("pickedup");
+
+        pickupRequestRepository.save(pickupRequest);
+    }
+
+
 }
