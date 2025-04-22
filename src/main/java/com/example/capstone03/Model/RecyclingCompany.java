@@ -18,7 +18,9 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RecyclingCompany {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(columnDefinition = "varchar(20) not null")

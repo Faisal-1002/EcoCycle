@@ -2,7 +2,9 @@ package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
 import com.example.capstone03.Model.CompanyRequest;
+import com.example.capstone03.Model.RecyclingCompany;
 import com.example.capstone03.Repository.CompanyRequestRepository;
+import com.example.capstone03.Repository.RecyclingCompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +14,17 @@ import java.util.List;
 public class CompanyRequestService {
 
     private final CompanyRequestRepository companyRequestRepository;
+    private final RecyclingCompanyRepository recyclingCompanyRepository;
 
     public List<CompanyRequest> getAllCompanyRequest(){
         return companyRequestRepository.findAll();
     }
     public void addCompanyRequest(CompanyRequest companyRequest){
+        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(companyRequest.getRecycling_company().getId());
+
+        if (recyclingCompany == null){
+            throw new ApiException("recycling company is not found");
+        }
         companyRequest.setId(companyRequest.getId());
         companyRequestRepository.save(companyRequest);
 

@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/recyclingCompany")
+@RequestMapping("/api/v1/recycling-company")
 @RequiredArgsConstructor
 public class RecyclingCompanyController {
 
@@ -18,6 +18,7 @@ public class RecyclingCompanyController {
     @GetMapping("/get")
     public ResponseEntity getAllRecyclingCompany(){
         return ResponseEntity.ok(recyclingCompanyService.getAllRecyclingCompany());
+
     }
     @PostMapping("/add")
     public ResponseEntity addRecyclingCompany(@RequestBody @Valid RecyclingCompany recyclingCompany){

@@ -14,17 +14,18 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 public class CompanyRequest {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(columnDefinition = "int not null")
-    @NotNull(message = "Recycler_Id number must be not empty")
-    private Integer recycler_id;
-
 
     @Column(columnDefinition = "int not null")
     @NotNull(message = "quantity must be not empty")
     private Integer quantity;
+
+    @Column(columnDefinition = "varchar(10) not null")
+    @NotNull(message = "status must be not empty")
+    private String status;
 
     @ManyToOne
     @JsonIgnore
