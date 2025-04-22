@@ -15,13 +15,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PickupRequest {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "date not null")
-    @NotNull(message = "Request date must not be null")
+    @Column(columnDefinition = "date")
     private LocalDateTime request_date;
 
     @Column(columnDefinition = "date")
@@ -40,7 +38,7 @@ public class PickupRequest {
     private User user;
 
     @OneToMany(mappedBy = "pickup_request", cascade = CascadeType.ALL)
-    private List<RecycleItem> recycleItems;
+    private List<RecycleItem> recycle_items;
 
     @ManyToOne
     @JoinColumn(name = "collector_id", referencedColumnName = "id")

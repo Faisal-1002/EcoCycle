@@ -19,6 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class RecyclingCompany {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(columnDefinition = "varchar(20) not null")
@@ -47,8 +48,8 @@ public class RecyclingCompany {
     private String password;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @NotEmpty(message = "Declaration must be not empty")
-    private String declaration;
+    @NotEmpty(message = "Certification must be not empty")
+    private String certification;
 
     @Column(columnDefinition = "date")
     private LocalDate permit_expiration;

@@ -18,8 +18,7 @@ public class ContainerRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "date not null")
-    @NotNull(message = "Request date must not be null")
+    @Column(columnDefinition = "date")
     private LocalDateTime request_date;
 
     @Column(columnDefinition = "date")
@@ -42,6 +41,4 @@ public class ContainerRequest {
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
     @JsonIgnore
     private Collector collector;
-
-
 }

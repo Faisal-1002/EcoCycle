@@ -15,12 +15,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CompanyRequest {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(columnDefinition = "int not null")
-    @NotNull(message = "Recycler_Id number must be not empty")
-    private Integer recycler_id;
-
 
     @Column(columnDefinition = "int not null")
     @NotNull(message = "quantity must be not empty")
