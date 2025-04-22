@@ -77,7 +77,7 @@ public class RecycleItemService {
     }
     //endpoint 12 - User can view points history
     public List<RecycleItem> getPointsHistory(Integer userId) {
-        return recycleItemRepository.findByPickup_requestUserId(userId);
+        return recycleItemRepository.findRecycleItemsByUserId(userId);
     }
 
 
