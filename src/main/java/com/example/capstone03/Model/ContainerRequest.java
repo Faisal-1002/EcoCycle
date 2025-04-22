@@ -27,7 +27,6 @@ public class ContainerRequest {
     private LocalDate delivery_date;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @NotNull(message = "Status must not be null")
     private String status;
 
     @Column(columnDefinition = "varchar(255)")

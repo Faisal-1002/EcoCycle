@@ -26,13 +26,13 @@ public class CompanyRequestController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity updateCoffee(@PathVariable Integer id, @RequestBody @Valid CompanyRequest companyRequest){
+    public ResponseEntity update(@PathVariable Integer id, @RequestBody @Valid CompanyRequest companyRequest){
         companyRequestService.updateCompanyRequest(id, companyRequest);
         return ResponseEntity.ok(new ApiResponse("update successfully"));
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity deleteCoffee(@PathVariable Integer id){
+    public ResponseEntity delete(@PathVariable Integer id){
         companyRequestService.deleteCompanyRequest(id);
         return ResponseEntity.ok(new ApiResponse("delete successfully"));
 

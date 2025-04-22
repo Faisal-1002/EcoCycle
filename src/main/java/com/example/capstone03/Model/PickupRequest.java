@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,22 +22,19 @@ public class PickupRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "date not null")
-    @NotNull(message = "Request date must not be null")
-    private LocalDateTime request_date;
+    @Column(columnDefinition = "date")
+    private LocalDate request_date;
 
     @Column(columnDefinition = "date")
-    private LocalDateTime pickup_date;
+    private LocalDate pickup_date;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @NotNull(message = "Status must not be null")
     @Pattern(regexp = "Requested|Auto-Requested|PickedUp|Delivered",
             message = "Status must be one of: Requested, Auto-Requested, PickedUp, Delivered")
     private String status;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @NotNull(message = "User must not be null")
     @JsonIgnore
     private User user;
 
