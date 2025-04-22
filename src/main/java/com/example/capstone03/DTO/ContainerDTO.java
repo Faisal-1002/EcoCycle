@@ -11,7 +11,7 @@ import lombok.Data;
 public class ContainerDTO {
 
     @Id
-    private Integer user_id;
+    private Integer id;
 
     @NotNull
     private Boolean is_available;

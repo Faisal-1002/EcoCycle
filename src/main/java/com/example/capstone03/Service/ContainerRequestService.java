@@ -4,13 +4,13 @@ import com.example.capstone03.Api.ApiException;
 import com.example.capstone03.Model.Container;
 import com.example.capstone03.Model.ContainerRequest;
 import com.example.capstone03.Model.User;
+import com.example.capstone03.Repository.ContainerRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -18,71 +18,76 @@ import java.util.List;
 public class ContainerRequestService {
 
     private final ContainerRequestRepository containerRequestRepository;
+    private final ContainerRepository containerRepository;
     private final UserRepository userRepository;
 
     public List<ContainerRequest> getAllContainerRequests() {
         return containerRequestRepository.findAll();
     }
 
-
-    public void assignContainerRequest(Integer userId,ContainerRequest containerRequest) {
+    public void addContainerRequest(Integer userId, ContainerRequest containerRequest) {
         User user = userRepository.findUserById(userId);
-        if (user == null){
-            throw new ApiException("user not found");
+        if (user == null) {
+            throw new ApiException("User not found");
         }
-        List<ContainerRequest> requests = containerRequestRepository.findAll();
-        for (ContainerRequest request : requests){
-            if (request.getUser().getId().equals(userId)  && request.getStatus().equals("Pending")){
-                throw new ApiException("user have already requested a container");
-            }
-
-        }
-
-        containerRequest.setRequest_date(LocalDate.now());
-        containerRequest.setStatus("Pending");
-        containerRequest.setDelivery_date(LocalDate.now().plusWeeks(1));
         containerRequest.setUser(user);
-
+        containerRequest.setRequest_date(LocalDate.now());
+        containerRequest.setStatus("pending");
+        containerRequest.setDelivery_date(LocalDate.now().plusWeeks(1));
         containerRequestRepository.save(containerRequest);
     }
 
-
-
-    public void updateContainerRequest(Integer id, ContainerRequest updatedContainerRequest) {
-        ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(id);
+    public void updateContainerRequest(Integer containerRequestId, ContainerRequest updatedContainerRequest) {
+        ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
         if (containerRequest == null) {
             throw new ApiException("Container request not found");
         }
-
-        containerRequest.setUser(updatedContainerRequest.getUser());
-        containerRequest.setCollector(updatedContainerRequest.getCollector());
-        containerRequest.setRequest_date(updatedContainerRequest.getRequest_date());
-        containerRequest.setDelivery_date(updatedContainerRequest.getDelivery_date());
-        containerRequest.setStatus(updatedContainerRequest.getStatus());
         containerRequest.setIssue_notes(updatedContainerRequest.getIssue_notes());
-
         containerRequestRepository.save(containerRequest);
     }
 
-    public void deleteContainerRequest(Integer id) {
-        ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(id);
+    public void deleteContainerRequest(Integer containerRequestId) {
+        ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
         if (containerRequest == null) {
             throw new ApiException("Container request not found");
         }
-
         containerRequestRepository.delete(containerRequest);
     }
 
-    public ContainerRequest getContainerRequestById(Integer id) {
-        ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(id);
+    public ContainerRequest getContainerRequestById(Integer containerRequestId) {
+        ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
         if (containerRequest == null) {
             throw new ApiException("Container request not found");
         }
         return containerRequest;
     }
 
+    public void deliverContainer(Integer containerRequestId) {
+        ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
+        if (containerRequest == null) {
+            throw new ApiException("Container request not found");
+        }
+
+        if (!"pending".equals(containerRequest.getStatus())) {
+            throw new ApiException("Only pending requests can be delivered");
+        }
+
+        Container container = containerRepository.findFirstAvailableContainer();
+        if (container == null) {
+            throw new ApiException("No available container found");
+        }
+
+        containerRequest.setContainer(container);
+        containerRequest.setDelivery_date(LocalDate.now());
+        containerRequest.setStatus("delivered");
+        containerRequestRepository.save(containerRequest);
+
+        container.setIs_available(false);
+        containerRepository.save(container);
+  }
+
     //endpoint 13 - View all container requests
-    public List<ContainerRequest> getPendingRequests() {
-        return containerRequestRepository.findContainerRequestByStatus("Pending");
-    }
+  public List<ContainerRequest> getPendingRequests() {
+      return containerRequestRepository.findContainerRequestByStatus("Pending");
+  }
 }
