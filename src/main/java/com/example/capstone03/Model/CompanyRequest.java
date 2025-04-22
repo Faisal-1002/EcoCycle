@@ -14,6 +14,7 @@ import lombok.Setter;
 @Entity
 @NoArgsConstructor
 public class CompanyRequest {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -21,6 +22,10 @@ public class CompanyRequest {
     @Column(columnDefinition = "int not null")
     @NotNull(message = "quantity must be not empty")
     private Integer quantity;
+
+    @Column(columnDefinition = "varchar(10) not null")
+    @NotNull(message = "status must be not empty")
+    private String status;
 
     @ManyToOne
     @JsonIgnore
