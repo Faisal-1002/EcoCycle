@@ -5,6 +5,7 @@ import com.example.capstone03.Model.*;
 import com.example.capstone03.Model.RecyclingCompany;
 import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.CompanyRequestRepository;
+import com.example.capstone03.Repository.RecycleItemRepository;
 import com.example.capstone03.Repository.RecyclingCompanyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailSender;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+
 @Service
 @RequiredArgsConstructor
 public class CompanyRequestService {
@@ -21,6 +24,7 @@ public class CompanyRequestService {
     private final CompanyRequestRepository companyRequestRepository;
     private final RecyclingCompanyRepository recyclingCompanyRepository;
     private final CollectorRepository collectorRepository;
+    private final RecycleItemRepository recycleItemRepository;
     private final MailSender mailSender;
 
 
@@ -115,6 +119,24 @@ public class CompanyRequestService {
     public void deliverRequest(Integer companyRequestId, Integer collectorId){
         CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
+        Set<PickupRequest> pickupRequests = collector.getPickup_request();
+
+
+        int totalPickedUpQuantity = 0;
+        for(PickupRequest pickupRequest : pickupRequests){
+            List<RecycleItem> recycleItems = pickupRequest.getRecycle_items();
+
+            for (RecycleItem recycleItem : recycleItems) {
+                if (recycleItem.getStatus().equals("delivered")){
+                    continue;
+                }
+                totalPickedUpQuantity += recycleItem.getWeight_kg();
+
+                recycleItem.setStatus("delivered");
+                recycleItemRepository.save(recycleItem);
+            }
+
+        }
 
         if (companyRequest == null) {
             throw new ApiException("Company Request not found");
@@ -129,6 +151,12 @@ public class CompanyRequestService {
         if (companyRequest.getStatus().equals("requested") || companyRequest.getStatus().equals("auto-requested") || companyRequest.getStatus().equals("delivered")) {
             throw new ApiException( companyRequest.getRecycling_company().getName() + " Company request is not accepted yet");
         }
+
+        if (totalPickedUpQuantity < companyRequest.getQuantity()) {
+            throw new ApiException("Pickup quantity is less than the requested quantity.collector needs to pick up more");
+        }
+
+
 
 
         companyRequest.setStatus("delivered");

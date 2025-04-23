@@ -68,4 +68,5 @@ public class PickupRequestController {
         pickupRequestService.pickedUpRequest(pickedUpId,collectorId);
         return ResponseEntity.status(200).body(new ApiResponse("pickup request been picked up"));
     }
+
 }
