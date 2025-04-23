@@ -20,9 +20,9 @@ public class RecycleItemController {
         return ResponseEntity.status(200).body(recycleItemService.getAllRecycleItems());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addRecycleItem(@RequestBody @Valid RecycleItem recycleItem) {
-        recycleItemService.addRecycleItem(recycleItem);
+    @PostMapping("/add/{pickupRequestId}")
+    public ResponseEntity<?> addRecycleItem(@PathVariable Integer pickupRequestId, @RequestBody @Valid RecycleItem recycleItem) {
+        recycleItemService.addRecycleItem(pickupRequestId, recycleItem);
         return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully"));
     }
 
