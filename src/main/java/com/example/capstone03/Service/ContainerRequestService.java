@@ -48,8 +48,18 @@ public class ContainerRequestService {
         if (user == null) {
             throw new ApiException("User not found");
         }
-        if (!user.getContainerRequests().isEmpty())
-            throw new ApiException("User has requested a container");
+
+        for (ContainerRequest request : user.getContainerRequests()) {
+            if (request.getStatus().equalsIgnoreCase("pending")) {
+                throw new ApiException("Container request is already pending");
+            }
+        }
+
+        for (ContainerRequest request : user.getContainerRequests()) {
+            if (request.getStatus().equalsIgnoreCase("delivered") && request.getContainer() != null) {
+                throw new ApiException("User has a delivered container");
+            }
+        }
 
         containerRequest.setUser(user);
         containerRequest.setRequest_date(LocalDate.now());
@@ -58,7 +68,7 @@ public class ContainerRequestService {
         containerRequestRepository.save(containerRequest);
 
         String subject = "Container Request Received";
-        String body = "\"Dear \" + user.getName() + \",\\n\\nWe have received your container request. Our team will process it shortly.\\n\\nThank you for using our service!\"";
+        String body = "Dear " + user.getName() + ",\n\n" + "We have received your container request. Our team will process it shortly.\n\n" + "Thank you for using our service!";
         String from = "faisal.a.m.2012@gmail.com";
         sendEmailToUser(user.getId(), subject, body, from);
     }
@@ -89,10 +99,74 @@ public class ContainerRequestService {
         return request;
     }
 
-    // 9. View all pending container requests
-    public List<ContainerRequest> getPendingRequests() {
-        return containerRequestRepository.findContainerRequestByStatus("Pending");
+    // 21. Request container replacement
+    public void requestContainerReplacement(Integer userId, String issueNotes) {
+        User user = userRepository.findUserById(userId);
+        if (user == null)
+            throw new ApiException("User not found");
+
+        if (issueNotes == null || issueNotes.trim().isEmpty()) {
+            throw new ApiException("Issue notes must be provided for replacement request");
+        }
+
+        ContainerRequest containerRequest = null;
+
+        for (ContainerRequest request : user.getContainerRequests()) {
+            if (request.getStatus().equalsIgnoreCase("delivered")) {
+                containerRequest = request;
+                break;
+            }
+        }
+
+        if (containerRequest == null) {
+            throw new ApiException("User does not currently have a container assigned");
+        }
+
+        ContainerRequest replaceRequest = new ContainerRequest();
+        replaceRequest.setUser(user);
+        replaceRequest.setContainer(containerRequest.getContainer());
+        replaceRequest.setRequest_date(LocalDate.now());
+        replaceRequest.setStatus("replace");
+        replaceRequest.setIssue_notes(issueNotes);
+
+        containerRequestRepository.save(replaceRequest);
     }
+
+    // 22. Process container replacement (accept/reject)
+    public void processReplaceRequest(Integer requestId, Boolean accepted) {
+        ContainerRequest request = containerRequestRepository.findContainerRequestById(requestId);
+        if (request == null)
+            throw new ApiException("Replacement request not found");
+        if (!request.getStatus().equalsIgnoreCase("replace")) {
+            throw new ApiException("Invalid replacement request status");
+        }
+
+        if (!accepted) {
+            request.setStatus("cancelled");
+            containerRequestRepository.save(request);
+            return;
+        }
+
+        Container container = request.getContainer();
+        if (container == null)
+            throw new ApiException("Container not linked");
+
+        container.setStatus_condition("damaged");
+        containerRepository.save(container);
+
+        // Unlink container from user request
+        List<ContainerRequest> userRequests = containerRequestRepository.findAllByUser(request.getUser());
+        for (ContainerRequest r : userRequests) {
+            if (r.getContainer() != null && r.getStatus().equalsIgnoreCase("delivered")) {
+                r.setContainer(null);
+                containerRequestRepository.save(r);
+            }
+        }
+
+        request.setStatus("replaced");
+        containerRequestRepository.save(request);
+    }
+
 
     // 10. Accept container request
     public void acceptContainerRequest(Integer containerRequestId, Integer collectorId) {
