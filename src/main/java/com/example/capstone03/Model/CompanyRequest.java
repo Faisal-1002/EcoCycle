@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -30,10 +32,18 @@ public class CompanyRequest {
     @NotNull(message = "quantity must be not empty")
     private Integer quantity;
 
-    @Column(columnDefinition = "varchar(15) not null")
-    @Pattern(regexp = "requested|auto-requested|processing|pickedUp|delivered",
-            message = "Status must be one of: Requested, Auto-Requested, PickedUp, Delivered")
+    @Column(columnDefinition = "varchar(10) not null")
+    @Pattern(regexp = "requested|auto-requested|processing|delivered",
+            message = "Status must be one of: Requested, Auto-Requested, Delivered")
     private String status;
+
+
+    @Column(columnDefinition = "date")
+    private LocalDate request_date;
+
+    @Column(columnDefinition = "date")
+    private LocalDate delivery_date;
+
 
     @ManyToOne
     @JsonIgnore
