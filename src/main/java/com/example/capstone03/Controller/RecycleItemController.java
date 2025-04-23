@@ -27,8 +27,8 @@ public class RecycleItemController {
     }
 
     // endpoint 10 - System awards points (1kg = 1 point) - automatic
-    @PostMapping("/add-point")
-    public ResponseEntity addRecycleItemToPickupRequest(@RequestBody @Valid Integer pickupRequestId, RecycleItem recycleItem) {
+    @PostMapping("/add-point/{pickupRequestId}")
+    public ResponseEntity addRecycleItemToPickupRequest(@PathVariable Integer pickupRequestId,@RequestBody @Valid  RecycleItem recycleItem) {
         recycleItemService.addRecycleItemToPickupRequest(pickupRequestId,recycleItem);
         return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully and get points"));
     }

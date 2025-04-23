@@ -2,7 +2,11 @@ package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
 import com.example.capstone03.Model.Collector;
+import com.example.capstone03.Model.ContainerRequest;
+import com.example.capstone03.Model.PickupRequest;
 import com.example.capstone03.Repository.CollectorRepository;
+import com.example.capstone03.Repository.ContainerRequestRepository;
+import com.example.capstone03.Repository.PickupRequestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,42 +17,60 @@ import java.util.List;
 public class CollectorService {
 
     private final CollectorRepository collectorRepository;
+    private final ContainerRequestRepository containerRequestRepository;
+    private final PickupRequestRepository pickupRequestRepository;
 
-    public List<Collector> getAllCollectors(){
+    public List<Collector> getAllCollectors() {
         return collectorRepository.findAll();
     }
 
-    public void addCollector(Collector collector){
+    public void addCollector(Collector collector) {
         collectorRepository.save(collector);
     }
 
-    public void updateCollector(Integer id, Collector collector){
-        Collector oldCollector = collectorRepository.findCollectorById(id);
-        if (oldCollector== null){
+    public void updateCollector(Integer id, Collector updatedCollector) {
+        Collector collector = collectorRepository.findCollectorById(id);
+        if (collector == null) {
             throw new ApiException("Collector not found");
         }
 
-        oldCollector.setName(collector.getName());
-        oldCollector.setEmail(collector.getEmail());
-        oldCollector.setPhone_number(collector.getPhone_number());
-        oldCollector.setAddress(collector.getAddress());
+        collector.setName(updatedCollector.getName());
+        collector.setEmail(updatedCollector.getEmail());
+        collector.setPassword(updatedCollector.getPassword());
+        collector.setAddress(updatedCollector.getAddress());
+        collector.setPhone_number(updatedCollector.getPhone_number());
 
-        collectorRepository.save(oldCollector);
+        collectorRepository.save(collector);
     }
 
-
-    public void delete(Integer id){
-        Collector oldCollector = collectorRepository.findCollectorById(id);
-        if (oldCollector == null){
+    public void deleteCollector(Integer id) {
+        Collector collector = collectorRepository.findCollectorById(id);
+        if (collector == null) {
             throw new ApiException("Collector not found");
         }
-        collectorRepository.delete(oldCollector);
+
+        collectorRepository.delete(collector);
     }
 
+    // 3. Get assigned container requests for a collector
+    public List<ContainerRequest> getAssignedContainerRequests(Integer collectorId) {
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+        if (collector == null) {
+            throw new ApiException("Collector not found");
+        }
 
+        return containerRequestRepository.findAllByCollector(collector);
+    }
 
+    // 4. Get assigned pickup requests for a collector
+    public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+        if (collector == null) {
+            throw new ApiException("Collector not found");
+        }
 
-
+        return pickupRequestRepository.findAllByCollector(collector);
+    }
 
 
 

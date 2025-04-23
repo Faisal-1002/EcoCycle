@@ -19,7 +19,6 @@ public class RecyclingCompanyService {
     }
 
     public void addRecyclingCompany(RecyclingCompany recyclingCompany){
-        //recyclingCompany.setId(recyclingCompany.getId());
         recyclingCompanyRepository.save(recyclingCompany);
     }
 

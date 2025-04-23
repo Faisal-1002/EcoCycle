@@ -3,13 +3,10 @@ package com.example.capstone03.Controller;
 import com.example.capstone03.Api.ApiResponse;
 import com.example.capstone03.Model.ContainerRequest;
 import com.example.capstone03.Service.ContainerRequestService;
-import com.example.capstone03.Service.ContainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/container-request")
@@ -17,7 +14,6 @@ import java.util.List;
 public class ContainerRequestController {
 
     private final ContainerRequestService containerRequestService;
-
 
     @GetMapping("/get")
     public ResponseEntity<?> getAllContainerRequests() {
@@ -47,38 +43,31 @@ public class ContainerRequestController {
         return ResponseEntity.status(200).body(containerRequestService.getContainerRequestById(id));
     }
 
-    @PostMapping("/container-request/{userId}")
-    public ResponseEntity<?> notifyContainerRequestReceived(@PathVariable Integer userId) {
-        containerRequestService.sendContainerRequestReceivedEmail(userId);
-        return ResponseEntity.status(200).body(new ApiResponse("Container request notification sent successfully"));
-    }
-
     @PutMapping("/deliver/collector-id/{collectorId}/container-request-id/{containerRequestId}")
     public ResponseEntity<?> deliverContainer(@PathVariable Integer collectorId, @PathVariable Integer containerRequestId) {
         containerRequestService.deliverContainer(collectorId, containerRequestId);
         return ResponseEntity.status(200).body(new ApiResponse("Container delivered and assigned successfully"));
     }
 
-    @PostMapping("/container-delivered/{userId}")
-    public ResponseEntity<?> notifyContainerDelivered(@PathVariable Integer userId) {
-        containerRequestService.notifyContainerDelivered(userId);
-        return ResponseEntity.status(200).body(new ApiResponse("Container delivery notification sent successfully"));
-    }
-
-    //endpoint 13 - View all container requests
     @GetMapping("/get-status")
     public ResponseEntity getAllPendingRequests() {
         return ResponseEntity.ok(containerRequestService.getPendingRequests());
     }
 
-    //endpoint 14 -  Accept container request
     @PutMapping("/accept/container-request-id/{containerRequestId}/collector-id/{collectorId}")
     public ResponseEntity acceptContainerRequest(@PathVariable Integer containerRequestId, @PathVariable Integer collectorId) {
         containerRequestService.acceptContainerRequest(containerRequestId, collectorId);
         return ResponseEntity.ok("Container request accepted successfully");
     }
 
+    @GetMapping("/status/{status}")
+    public ResponseEntity<?> getRequestsByStatus(@PathVariable String status) {
+        return ResponseEntity.status(200).body(containerRequestService.getRequestsByStatus(status));
+    }
 
-
+    @GetMapping("/collector/{collectorId}")
+    public ResponseEntity<?> getRequestsByCollectorId(@PathVariable Integer collectorId) {
+        return ResponseEntity.status(200).body(containerRequestService.getRequestsByCollectorId(collectorId));
+    }
 
 }
