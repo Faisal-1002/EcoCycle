@@ -197,6 +197,28 @@ public class PickupRequestService {
     // 23. View assigned pickup requests
     public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
         return pickupRequestRepository.findAllByCollectorId(collectorId);
+
+    }
+
+    //endpoint 11- Notify user: Pickup completed #by abeer
+    public void sendPickupNotification(Integer userId) {
+        User user = userRepository.findUserById(userId);
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        String messageText = "Dear " + user.getName() + ",\n\n" +
+                "Your recycling pickup has been successfully completed!\n" +
+                "Points have been added to your account.\n\n" +
+                "Thank you for your commitment to recycling!";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Pickup Completed");
+        message.setText(messageText);
+        message.setFrom("faisal.a.m.2012@gmail.com");
+
+        mailSender.send(message);
     }
 
     // 24. Notify user: Pickup completed + Points updated
