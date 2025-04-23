@@ -47,7 +47,6 @@ public class CompanyRequestService {
 
     }
 
-
     public void updateCompanyRequest(Integer id , CompanyRequest companyRequest){
         CompanyRequest oldCompanyRequest = companyRequestRepository.findCompanyRequestById(id);
 
@@ -68,11 +67,7 @@ public class CompanyRequestService {
         companyRequestRepository.delete(companyRequest);
     }
 
-    //=================================================
-    //1.
-
-    //20  View pending company requests
-
+    // 29. View pending company requests
     public List<CompanyRequest> pendingRequests(){
         List<CompanyRequest> requests = companyRequestRepository.findAll();
         List<CompanyRequest> pendingRequest = new ArrayList<>();
@@ -85,12 +80,7 @@ public class CompanyRequestService {
         return pendingRequest;
     }
 
-
-
-    //2.
-
-    //21  Accept company delivery request
-
+    // 30. Accept company delivery request
     public void acceptCompanyRequest(Integer companyRequestId, Integer collectorId){
         CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -113,14 +103,11 @@ public class CompanyRequestService {
         companyRequestRepository.save(companyRequest);
     }
 
-
-    //3.
-
+    // 31. Delivery
     public void deliverRequest(Integer companyRequestId, Integer collectorId){
         CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
         Set<PickupRequest> pickupRequests = collector.getPickup_request();
-
 
         int totalPickedUpQuantity = 0;
         for(PickupRequest pickupRequest : pickupRequests){
@@ -166,11 +153,7 @@ public class CompanyRequestService {
 
     }
 
-
-    //4.
-
-    //22 View completed delivery history
-
+    // 32. View completed delivery history
     public List<CompanyRequest> getDeliveredRequest(){
         List<CompanyRequest> requests = companyRequestRepository.findAll();
         List<CompanyRequest> deliveredRequest = new ArrayList<>();
@@ -184,8 +167,7 @@ public class CompanyRequestService {
         return deliveredRequest;
     }
 
-    //5.
-
+    // 33. Send email
     public void sendCompanyRequestReceivedEmail(Integer recycleCompanyId) {
         RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recycleCompanyId);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -196,7 +178,7 @@ public class CompanyRequestService {
         mailSender.send(message);
     }
 
-    //6.
+    // 34. Send email
     public void sendCompanyRequestDeliveredEmail(Integer recycleCompanyId) {
         RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recycleCompanyId);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -209,8 +191,5 @@ public class CompanyRequestService {
         message.setFrom("faisal.a.m.2012@gmail.com");
         mailSender.send(message);
     }
-
-
-
 
 }

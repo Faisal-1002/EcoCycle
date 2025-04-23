@@ -33,7 +33,7 @@ public class PickupRequestService {
         return pickupRequestRepository.findAll();
     }
 
-    //5. Request pickup manually
+    // 16. Request pickup manually
     public void addPickupRequest(Integer userId, PickupRequest pickupRequest) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -67,6 +67,7 @@ public class PickupRequestService {
         pickupRequestRepository.delete(pickupRequest);
     }
 
+    // 17. Get pickup request by ID
     public PickupRequest getPickupRequestById(Integer pickupRequestId) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -75,12 +76,7 @@ public class PickupRequestService {
         return pickupRequest;
     }
 
-
-    //==============================
-
-
-
-    //6. Auto pickup request if 7 days passes with no manual request
+    // 18. Auto pickup request if 7 days passes with no manual request
     @Scheduled(cron = "0 0 0 * * ?")
     public void autoCreatePickupRequestsAfter7Days() {
         List<ContainerRequest> deliveredContainers = containerRequestRepository.findAllByStatus("delivered");
@@ -118,7 +114,7 @@ public class PickupRequestService {
         }
     }
 
-    //7. Notify scheduled pickup
+    // 19. Notify scheduled pickup
     public void notifyPickupScheduled(Integer userId, LocalDate pickup_date) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -134,8 +130,7 @@ public class PickupRequestService {
         mailSender.send(message);
     }
 
-    //8. Close pickup request
-    //17. Accept a pickup
+    // 20. Accept a pickup request
     public void acceptPickupRequest(Integer pickupRequestId, Integer collectorId) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -158,8 +153,7 @@ public class PickupRequestService {
         pickupRequestRepository.save(pickupRequest);
     }
 
-    //picked up
-    //Abdulraouf
+    // 21. Picked up request
     public void pickedUpRequest(Integer pickupId, Integer collectorId){
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -186,7 +180,7 @@ public class PickupRequestService {
 
     }
 
-    //Abdulraouf
+    // 22. Send request by email
     public void sendRequestPickedUpEmail(Integer userId) {
         User user = userRepository.findUserById(userId);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -200,12 +194,34 @@ public class PickupRequestService {
         mailSender.send(message);
     }
 
-    // endpoint 16 - View assigned pickup requests
+    // 23. View assigned pickup requests
     public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
         return pickupRequestRepository.findAllByCollectorId(collectorId);
+
     }
 
-    //endpoint 11- Notify user: Pickup completed + Points updated
+    //endpoint 11- Notify user: Pickup completed #by abeer
+    public void sendPickupNotification(Integer userId) {
+        User user = userRepository.findUserById(userId);
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        String messageText = "Dear " + user.getName() + ",\n\n" +
+                "Your recycling pickup has been successfully completed!\n" +
+                "Points have been added to your account.\n\n" +
+                "Thank you for your commitment to recycling!";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Pickup Completed");
+        message.setText(messageText);
+        message.setFrom("faisal.a.m.2012@gmail.com");
+
+        mailSender.send(message);
+    }
+
+    // 24. Notify user: Pickup completed + Points updated
     public String completePickupAndNotify(Integer userId) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -233,6 +249,7 @@ public class PickupRequestService {
         return message;
     }
 
+    // 25. Send email
     private void sendEmail(String to, String subject, String body) {
         SimpleMailMessage mail = new SimpleMailMessage();
         mail.setTo(to);
