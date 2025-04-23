@@ -72,8 +72,6 @@ public class CollectorService {
         return pickupRequestRepository.findAllByCollector(collector);
     }
 
-    public void companyRequestDelivered(Integer companyId,Integer collectorId){
 
-    }
 
 }

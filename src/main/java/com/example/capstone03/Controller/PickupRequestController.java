@@ -57,10 +57,15 @@ public class PickupRequestController {
     }
 
     //endpoint 11- Notify user: Pickup completed + Points updated
-//    @PostMapping("/pickup-completed/{userId}")
-//    public ResponseEntity notifyAndComplete(@PathVariable Integer userId) {
-//        String result = pickupRequestService.completePickupAndNotify(userId);
-//        return ResponseEntity.ok(result);
-//    }
+    @PostMapping("/pickup-completed/{userId}")
+    public ResponseEntity<String> notifyAndComplete(@PathVariable Integer userId) {
+        String result = pickupRequestService.completePickupAndNotify(userId);
+        return ResponseEntity.ok(result);
+    }
 
+    @PutMapping("/pickedUp-request/{pickedUpId}/collector/{collectorId}")
+    public ResponseEntity<ApiResponse> deliverRecyclingCompanyRequest(@PathVariable Integer pickedUpId,@PathVariable Integer collectorId) {
+        pickupRequestService.pickedUpRequest(pickedUpId,collectorId);
+        return ResponseEntity.status(200).body(new ApiResponse("pickup request been picked up"));
+    }
 }
