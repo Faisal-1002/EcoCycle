@@ -26,7 +26,6 @@ public class RecycleItemService {
         return recycleItemRepository.findAll();
     }
 
-    //9. Add recycle Items when collecting
     public void addRecycleItem(Integer pickupRequestId, RecycleItem recycleItem) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -37,7 +36,7 @@ public class RecycleItemService {
         recycleItemRepository.save(recycleItem);
     }
 
-    // 10. System awards points (1kg = 1 point) - automatic
+    // 26. System awards points (1kg = 1 point) - automatic
     public void addRecycleItemToPickupRequest(Integer pickupRequestId, RecycleItem recycleItem) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null){
@@ -76,6 +75,7 @@ public class RecycleItemService {
         recycleItemRepository.delete(recycleItem);
     }
 
+    // 27. get by ID
     public RecycleItem getRecycleItemById(Integer id) {
         RecycleItem recycleItem = recycleItemRepository.findRecycleItemById(id);
         if (recycleItem == null) {
@@ -83,6 +83,7 @@ public class RecycleItemService {
         }
         return recycleItem;
     }
+  
     //endpoint 12 - User can view points history
     public PointsDTO getPointsHistory(Integer userId) {
         List<RecycleItem> items = recycleItemRepository.findRecycleItemsByUserId(userId);
@@ -112,6 +113,7 @@ public class RecycleItemService {
             int points = (int) totalWeight;
             return new PointsDTO(totalWeight, points, lastPickupDate);
         }
-
-
     }
+
+}
+

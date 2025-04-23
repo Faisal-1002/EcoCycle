@@ -2,7 +2,6 @@ package com.example.capstone03.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import java.time.LocalDate;
@@ -25,7 +24,7 @@ public class ContainerRequest {
     private LocalDate delivery_date;
 
     @Column(columnDefinition = "varchar(20)")
-    @Pattern(regexp = "^(pending|processing|delivered|cancelled)")
+    @Pattern(regexp = "^(pending|processing|delivered|cancelled|replace|replaced)")
     private String status;
 
     @Column(columnDefinition = "varchar(255)")

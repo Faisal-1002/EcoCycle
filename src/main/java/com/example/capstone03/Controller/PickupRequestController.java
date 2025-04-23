@@ -69,4 +69,9 @@ public class PickupRequestController {
         }
     }
 
+    @PutMapping("/pickedUp-request/{pickedUpId}/collector/{collectorId}")
+    public ResponseEntity<ApiResponse> deliverRecyclingCompanyRequest(@PathVariable Integer pickedUpId,@PathVariable Integer collectorId) {
+        pickupRequestService.pickedUpRequest(pickedUpId,collectorId);
+        return ResponseEntity.status(200).body(new ApiResponse("pickup request been picked up"));
+    }
 }

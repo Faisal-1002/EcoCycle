@@ -1,11 +1,7 @@
 package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
-import com.example.capstone03.Model.Collector;
-import com.example.capstone03.Model.ContainerRequest;
-import com.example.capstone03.Model.PickupRequest;
-import com.example.capstone03.Model.RecycleItem;
-import com.example.capstone03.Model.User;
+import com.example.capstone03.Model.*;
 import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.PickupRequestRepository;
@@ -37,7 +33,7 @@ public class PickupRequestService {
         return pickupRequestRepository.findAll();
     }
 
-    //5. Request pickup manually
+    // 16. Request pickup manually
     public void addPickupRequest(Integer userId, PickupRequest pickupRequest) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -71,6 +67,7 @@ public class PickupRequestService {
         pickupRequestRepository.delete(pickupRequest);
     }
 
+    // 17. Get pickup request by ID
     public PickupRequest getPickupRequestById(Integer pickupRequestId) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -79,12 +76,7 @@ public class PickupRequestService {
         return pickupRequest;
     }
 
-
-    //==============================
-
-
-
-    //6. Auto pickup request if 7 days passes with no manual request
+    // 18. Auto pickup request if 7 days passes with no manual request
     @Scheduled(cron = "0 0 0 * * ?")
     public void autoCreatePickupRequestsAfter7Days() {
         List<ContainerRequest> deliveredContainers = containerRequestRepository.findAllByStatus("delivered");
@@ -122,7 +114,7 @@ public class PickupRequestService {
         }
     }
 
-    //7. Notify scheduled pickup
+    // 19. Notify scheduled pickup
     public void notifyPickupScheduled(Integer userId, LocalDate pickup_date) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -138,8 +130,7 @@ public class PickupRequestService {
         mailSender.send(message);
     }
 
-    //8. Close pickup request
-    //17. Accept a pickup
+    // 20. Accept a pickup request
     public void acceptPickupRequest(Integer pickupRequestId, Integer collectorId) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -157,12 +148,53 @@ public class PickupRequestService {
 
         pickupRequest.setCollector(collector);
         pickupRequest.setPickup_date(LocalDate.now().plusDays(1));
-        pickupRequest.setStatus("pickedup");
+        pickupRequest.setStatus("processing");
 
         pickupRequestRepository.save(pickupRequest);
     }
 
-    // endpoint 16 - View assigned pickup requests #by abeer
+    // 21. Picked up request
+    public void pickedUpRequest(Integer pickupId, Integer collectorId){
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+
+        if (pickupRequest == null) {
+            throw new ApiException("Pickup Request not found");
+        }
+        if (collector == null){
+            throw new ApiException("Collector not found");
+        }
+        if (!collector.getId().equals(pickupRequest.getCollector().getId())){
+            throw new ApiException("Collector is not allowed to deliver");
+        }
+
+        if (pickupRequest.getStatus().equals("requested") || pickupRequest.getStatus().equals("auto-requested") || pickupRequest.getStatus().equals("pickedup")) {
+            throw new ApiException("The pickup request for " + pickupRequest.getUser().getName() + " has either not been accepted yet or may have already been picked up.");
+        }
+
+
+        pickupRequest.setStatus("pickedup");
+        pickupRequest.setPickup_date(LocalDate.now());
+        pickupRequestRepository.save(pickupRequest);
+        sendRequestPickedUpEmail(pickupRequest.getUser().getId());
+
+    }
+
+    // 22. Send request by email
+    public void sendRequestPickedUpEmail(Integer userId) {
+        User user = userRepository.findUserById(userId);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Pickup Request Successfully Picked Up");
+        message.setText("Dear " + user.getName() + ",\n\n" +
+                "We are pleased to inform you that your pickup request has been successfully picked up by our collector.\n\n" +
+                "Thank you for using our service!\n\n" +
+                "Best regards,\nYour Service Team");
+        message.setFrom("faisal.a.m.2012@gmail.com");
+        mailSender.send(message);
+    }
+
+    // 23. View assigned pickup requests
     public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
         return pickupRequestRepository.findAllByCollectorId(collectorId);
 
@@ -187,6 +219,43 @@ public class PickupRequestService {
         message.setFrom("faisal.a.m.2012@gmail.com");
 
         mailSender.send(message);
+    }
+
+    // 24. Notify user: Pickup completed + Points updated
+    public String completePickupAndNotify(Integer userId) {
+        User user = userRepository.findUserById(userId);
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+        List<RecycleItem> items = recycleItemRepository.findRecycleItemsByUserId(userId).stream().filter(item -> item.getPickup_request() != null
+                        && item.getPickup_request().getStatus().equalsIgnoreCase("PickedUp")).toList();
+
+        double totalWeight = items.stream()
+                .mapToDouble(RecycleItem::getWeight_kg).sum();
+
+        int earnedPoints = (int) totalWeight;
+
+        if (earnedPoints == 0) {
+            return "No picked-up items found. No points added.";
+        }
+
+
+        user.setPoints(user.getPoints() + earnedPoints);
+        userRepository.save(user);
+
+        String message = "Pickup completed!\nYou earned " + earnedPoints + " points.\n\nThank you for recycling with us!";
+        sendEmail(user.getEmail(), " Pickup Completed & Points Earned", message);
+
+        return message;
+    }
+
+    // 25. Send email
+    private void sendEmail(String to, String subject, String body) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        mail.setTo(to);
+        mail.setSubject(subject);
+        mail.setText(body);
+        mailSender.send(mail);
     }
 
 }

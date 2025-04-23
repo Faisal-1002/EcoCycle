@@ -39,8 +39,7 @@ public class User {
     @NotEmpty(message = "Phone number must not be empty")
     private String phone_number;
 
-    @Column(columnDefinition = "int not null default 0")
-    @NotNull(message = "Points must not be null")
+    @Column(columnDefinition = "int")
     private Integer points;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
