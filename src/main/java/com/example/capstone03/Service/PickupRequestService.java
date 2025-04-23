@@ -82,30 +82,7 @@ public class PickupRequestService {
 
     //==============================
 
-    //17 Accept a pickup
 
-    public void acceptPickup(Integer pickupId, Integer collectorId){
-        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupId);
-        Collector collector = collectorRepository.findCollectorById(collectorId);
-
-        if (pickupRequest == null) {
-            throw new ApiException("Pickup request not found");
-        }
-        if (collector == null){
-            throw new ApiException("collector not found");
-        }
-
-        List<PickupRequest> requests = pickupRequestRepository.findAll();
-        for (PickupRequest request : requests){
-            if (request.getStatus().equals("Processing")){
-                throw new ApiException("Pickup Request been accepted already By "+ request.getCollector().getName());
-            }
-        }
-
-        pickupRequest.setCollector(collector);
-        pickupRequest.setStatus("Processing");
-        pickupRequestRepository.save(pickupRequest);
-    }
 
     //6. Auto pickup request if 7 days passes with no manual request
     @Scheduled(cron = "0 0 0 * * ?")
@@ -162,6 +139,7 @@ public class PickupRequestService {
     }
 
     //8. Close pickup request
+    //17. Accept a pickup
     public void acceptPickupRequest(Integer pickupRequestId, Integer collectorId) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -178,7 +156,7 @@ public class PickupRequestService {
         }
 
         pickupRequest.setCollector(collector);
-        pickupRequest.setPickup_date(LocalDate.now());
+        pickupRequest.setPickup_date(LocalDate.now().plusDays(1));
         pickupRequest.setStatus("pickedup");
 
         pickupRequestRepository.save(pickupRequest);
