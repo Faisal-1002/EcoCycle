@@ -47,7 +47,7 @@ public class RecycleItemService {
         // update points
         User user = pickupRequest.getUser();
         int points = recycleItem.getWeight_kg().intValue();
-        user.setPoints(user.getPoints() + points);
+        user.setPoints(points);
         userRepository.save(user);
     }
 
