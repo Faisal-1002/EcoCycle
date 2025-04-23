@@ -20,6 +20,7 @@ public class ContainerService {
 
     public void addContainer(Container container) {
         container.setAvailable(true);
+        container.setStatus_condition("new");
         containerRepository.save(container);
     }
 
@@ -30,7 +31,6 @@ public class ContainerService {
         }
 
         container.setAvailable(updatedContainer.getAvailable());
-        container.setSize(updatedContainer.getSize());
         container.setLocation(updatedContainer.getLocation());
         container.setStatus_condition(updatedContainer.getStatus_condition());
 

@@ -43,8 +43,6 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(pickupRequestService.getPickupRequestById(id));
     }
 
-
-    //17
     @PutMapping("/accept-pickup/{pickupRequestId}/{collectorId}")
     public ResponseEntity<?> acceptPickupRequest(@PathVariable Integer pickupRequestId,
                                                  @PathVariable Integer collectorId) {

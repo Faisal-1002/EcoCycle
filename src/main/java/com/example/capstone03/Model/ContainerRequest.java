@@ -38,7 +38,6 @@ public class ContainerRequest {
 
     @ManyToOne
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
-    @JsonIgnore
     private Collector collector;
 
     @ManyToOne

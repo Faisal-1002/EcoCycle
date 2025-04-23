@@ -9,8 +9,10 @@ import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.ContainerRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.UserRepository;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,16 @@ public class ContainerRequestService {
     private final CollectorRepository collectorRepository;
     private final JavaMailSender mailSender;
 
+    @Value("${twilio.account_sid}")
+    private String twilioSid;
+
+    @Value("${twilio.auth_token}")
+    private String twilioToken;
+
+    @Value("${twilio.phone_number}")
+    private String twilioFrom;
+
+
     public List<ContainerRequest> getAllContainerRequests() {
         return containerRequestRepository.findAll();
     }
@@ -38,6 +50,9 @@ public class ContainerRequestService {
         if (user == null) {
             throw new ApiException("User not found");
         }
+        if (!user.getContainerRequests().isEmpty())
+            throw new ApiException("User has requested a container");
+
         containerRequest.setUser(user);
         containerRequest.setRequest_date(LocalDate.now());
         containerRequest.setStatus("pending");
@@ -82,6 +97,49 @@ public class ContainerRequestService {
         mailSender.send(message);
     }
 
+    //endpoint 13 - View all container requests
+    public List<ContainerRequest> getPendingRequests() {
+        return containerRequestRepository.findContainerRequestByStatus("Pending");
+    }
+
+    //endpoint 14 -  Accept container request
+    public void acceptContainerRequest(Integer containerRequestId, Integer collectorId) {
+        ContainerRequest request = containerRequestRepository.findContainerRequestById(containerRequestId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+        User user = request.getUser();
+        if (collector == null)
+            throw new ApiException("Collector is not found");
+        if (request == null) {
+            throw new ApiException("Container request not found");
+        }
+        if (!request.getStatus().equalsIgnoreCase("pending")) {
+            throw new RuntimeException("Only pending requests can be accepted");
+        }
+        Container container = containerRepository.findTop1ByAvailableTrueOrderByIdAsc();
+        if (container == null) {
+            throw new ApiException("No available container found");
+        }
+        request.setContainer(container);
+        request.setCollector(collector);
+        request.setStatus("processing");
+        containerRequestRepository.save(request);
+        container.setAvailable(false);
+        containerRepository.save(container);
+        String message = "Hi, " + user.getName() + " your request #" + request.getId() + " has been accepted";
+        sendWhatsAppMessage(user.getPhone_number(), message);
+    }
+
+    //15. Send accept notification through Whatsapp
+    public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
+        Twilio.init(twilioSid, twilioToken);
+        phoneNumber = "+966" + phoneNumber.substring(1);
+        Message.creator(
+                new com.twilio.type.PhoneNumber("whatsapp:" + phoneNumber),
+                new com.twilio.type.PhoneNumber(twilioFrom),
+                messageBody
+        ).create();
+    }
+
     //3. Deliver Container
     public void deliverContainer(Integer collectorId, Integer containerRequestId) {
         ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
@@ -120,36 +178,6 @@ public class ContainerRequestService {
         message.setFrom("faisal.a.m.2012@gmail.com");
 
         mailSender.send(message);
-    }
-
-    //endpoint 13 - View all container requests
-    public List<ContainerRequest> getPendingRequests() {
-        return containerRequestRepository.findContainerRequestByStatus("Pending");
-    }
-
-    //endpoint 14 -  Accept container request
-    public void acceptContainerRequest(Integer containerRequestId, Integer collectorId) {
-        ContainerRequest request = containerRequestRepository.findContainerRequestById(containerRequestId);
-        Collector collector = collectorRepository.findCollectorById(collectorId);
-
-        if (collector == null)
-            throw new ApiException("Collector is not found");
-        if (request == null) {
-            throw new ApiException("Container request not found");
-        }
-        if (!request.getStatus().equalsIgnoreCase("pending")) {
-            throw new RuntimeException("Only pending requests can be accepted");
-        }
-        Container container = containerRepository.findTop1ByAvailableTrueOrderByIdAsc();
-        if (container == null) {
-            throw new ApiException("No available container found");
-        }
-        request.setContainer(container);
-        request.setCollector(collector);
-        request.setStatus("processing");
-        containerRequestRepository.save(request);
-        container.setAvailable(false);
-        containerRepository.save(container);
     }
 
 }
