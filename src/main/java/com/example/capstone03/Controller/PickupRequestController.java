@@ -42,4 +42,10 @@ public class PickupRequestController {
     public ResponseEntity<?> getPickupRequestById(@PathVariable Integer id) {
         return ResponseEntity.status(200).body(pickupRequestService.getPickupRequestById(id));
     }
+
+    @PutMapping("/accept-pickup/{pickupId}/collector/{collectorId}")
+    public ResponseEntity<ApiResponse> acceptPickupRequest(@PathVariable Integer pickupId,@PathVariable Integer collectorId) {
+        pickupRequestService.acceptPickup(pickupId,collectorId);
+        return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted"));
+    }
 }

@@ -29,7 +29,7 @@ public class PickupRequest {
     private LocalDate pickup_date;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @Pattern(regexp = "Requested|Auto-Requested|PickedUp|Delivered",
+    @Pattern(regexp = "Requested|Auto-Requested|Processing|PickedUp",
             message = "Status must be one of: Requested, Auto-Requested, PickedUp, Delivered")
     private String status;
 

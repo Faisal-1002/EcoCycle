@@ -1,9 +1,11 @@
 package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
+import com.example.capstone03.Model.Collector;
 import com.example.capstone03.Model.ContainerRequest;
 import com.example.capstone03.Model.PickupRequest;
 import com.example.capstone03.Model.User;
+import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.PickupRequestRepository;
 import com.example.capstone03.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import java.util.List;
 public class PickupRequestService {
 
     private final PickupRequestRepository pickupRequestRepository;
+    private final CollectorRepository collectorRepository;
     private final UserRepository userRepository;
 
     public List<PickupRequest> getAllPickupRequests() {
@@ -43,6 +46,8 @@ public class PickupRequestService {
         pickupRequest.setStatus("Requested");
         pickupRequestRepository.save(pickupRequest);
     }
+
+
 
     public void updatePickupRequest(Integer id, PickupRequest updatedPickupRequest) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(id);
@@ -74,5 +79,34 @@ public class PickupRequestService {
             throw new ApiException("Pickup request not found");
         }
         return pickupRequest;
+    }
+
+
+
+    //==============================
+
+    //17 Accept a pickup
+
+    public void acceptPickup(Integer pickupId, Integer collectorId){
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+
+        if (pickupRequest == null) {
+            throw new ApiException("Pickup request not found");
+        }
+        if (collector == null){
+            throw new ApiException("collector not found");
+        }
+
+        List<PickupRequest> requests = pickupRequestRepository.findAll();
+        for (PickupRequest request : requests){
+            if (request.getStatus().equals("Processing")){
+                throw new ApiException("Pickup Request been accepted already By "+ request.getCollector().getName());
+            }
+        }
+
+        pickupRequest.setCollector(collector);
+        pickupRequest.setStatus("Processing");
+        pickupRequestRepository.save(pickupRequest);
     }
 }
