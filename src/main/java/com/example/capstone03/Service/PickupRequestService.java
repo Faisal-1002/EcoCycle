@@ -27,7 +27,8 @@ import java.util.List;
 public class PickupRequestService {
 
     private final PickupRequestRepository pickupRequestRepository;
-    private final RecycleItemRepository recycleItemRepository;
+    private final CollectorRepository collectorRepository;
+    private final RecycleItemRepository recycleItemReposito;
     private final UserRepository userRepository;
     private final ContainerRequestRepository containerRequestRepository;
     private final CollectorRepository collectorRepository;
@@ -51,6 +52,7 @@ public class PickupRequestService {
         pickupRequestRepository.save(pickupRequest);
         notifyPickupScheduled(userId, pickupRequest.getPickup_date());
     }
+
 
     public void updatePickupRequest(Integer pickupRequestId, PickupRequest updatedPickupRequest) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
@@ -76,6 +78,34 @@ public class PickupRequestService {
             throw new ApiException("Pickup request not found");
         }
         return pickupRequest;
+    }
+
+
+    //==============================
+
+    //17 Accept a pickup
+
+    public void acceptPickup(Integer pickupId, Integer collectorId){
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+
+        if (pickupRequest == null) {
+            throw new ApiException("Pickup request not found");
+        }
+        if (collector == null){
+            throw new ApiException("collector not found");
+        }
+
+        List<PickupRequest> requests = pickupRequestRepository.findAll();
+        for (PickupRequest request : requests){
+            if (request.getStatus().equals("Processing")){
+                throw new ApiException("Pickup Request been accepted already By "+ request.getCollector().getName());
+            }
+        }
+
+        pickupRequest.setCollector(collector);
+        pickupRequest.setStatus("Processing");
+        pickupRequestRepository.save(pickupRequest);
     }
 
     //6. Auto pickup request if 7 days passes with no manual request
@@ -194,6 +224,4 @@ public class PickupRequestService {
         mail.setText(body);
         mailSender.send(mail);
     }
-
-
 }

@@ -45,6 +45,10 @@ public class CollectorService {
         collectorRepository.delete(oldCollector);
     }
 
+    public void companyRequestDelivered(Integer companyId,Integer collectorId){
+
+    }
+
 
 
 

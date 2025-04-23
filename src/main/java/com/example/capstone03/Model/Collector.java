@@ -3,6 +3,7 @@ package com.example.capstone03.Model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,6 +35,11 @@ public class Collector {
     @Email(message = "Email must be valid")
     private String email;
 
+    @Column(columnDefinition = "varchar(20) not null")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$", message = "Password must be at least 8 characters and include uppercase, lowercase, and a number")
+    @NotEmpty(message = "password cannot be empty")
+    private String password;
+
     @Column(columnDefinition = "varchar(255) not null")
     @NotEmpty(message = "Address must not be empty")
     private String address;
@@ -43,11 +49,11 @@ public class Collector {
     private String phone_number;
 
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
-    private Set<ContainerRequest> container_Requests;
+    private Set<ContainerRequest> container_requests;
 
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
-    private Set<PickupRequest> Pickup_Request;
+    private Set<PickupRequest> pickup_request;
 
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
-    private Set<CompanyRequest> Company_Request;
+    private Set<CompanyRequest> company_request;
 }

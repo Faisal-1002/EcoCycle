@@ -19,7 +19,7 @@ public class ContainerService {
     }
 
     public void addContainer(Container container) {
-        container.setIs_available(true);
+        container.setAvailable(true);
         containerRepository.save(container);
     }
 
@@ -29,7 +29,7 @@ public class ContainerService {
             throw new ApiException("Container not found");
         }
 
-        container.setIs_available(updatedContainer.getIs_available());
+        container.setAvailable(updatedContainer.getAvailable());
         container.setSize(updatedContainer.getSize());
         container.setLocation(updatedContainer.getLocation());
         container.setStatus_condition(updatedContainer.getStatus_condition());
