@@ -1,11 +1,7 @@
 package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
-import com.example.capstone03.Model.Collector;
-import com.example.capstone03.Model.ContainerRequest;
-import com.example.capstone03.Model.PickupRequest;
-import com.example.capstone03.Model.RecycleItem;
-import com.example.capstone03.Model.User;
+import com.example.capstone03.Model.*;
 import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.PickupRequestRepository;
@@ -157,9 +153,51 @@ public class PickupRequestService {
 
         pickupRequest.setCollector(collector);
         pickupRequest.setPickup_date(LocalDate.now().plusDays(1));
-        pickupRequest.setStatus("pickedup");
+        pickupRequest.setStatus("processing");
 
         pickupRequestRepository.save(pickupRequest);
+    }
+
+    //picked up
+    //Abdulraouf
+    public void pickedUpRequest(Integer pickupId, Integer collectorId){
+        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+
+        if (pickupRequest == null) {
+            throw new ApiException("Pickup Request not found");
+        }
+        if (collector == null){
+            throw new ApiException("Collector not found");
+        }
+        if (!collector.getId().equals(pickupRequest.getCollector().getId())){
+            throw new ApiException("Collector is not allowed to deliver");
+        }
+
+        if (pickupRequest.getStatus().equals("requested") || pickupRequest.getStatus().equals("auto-requested") || pickupRequest.getStatus().equals("pickedup")) {
+            throw new ApiException("The pickup request for " + pickupRequest.getUser().getName() + " has either not been accepted yet or may have already been picked up.");
+        }
+
+
+        pickupRequest.setStatus("pickedup");
+        pickupRequest.setPickup_date(LocalDate.now());
+        pickupRequestRepository.save(pickupRequest);
+        sendRequestPickedUpEmail(pickupRequest.getUser().getId());
+
+    }
+
+    //Abdulraouf
+    public void sendRequestPickedUpEmail(Integer userId) {
+        User user = userRepository.findUserById(userId);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Pickup Request Successfully Picked Up");
+        message.setText("Dear " + user.getName() + ",\n\n" +
+                "We are pleased to inform you that your pickup request has been successfully picked up by our collector.\n\n" +
+                "Thank you for using our service!\n\n" +
+                "Best regards,\nYour Service Team");
+        message.setFrom("faisal.a.m.2012@gmail.com");
+        mailSender.send(message);
     }
 
     // endpoint 16 - View assigned pickup requests
@@ -185,6 +223,7 @@ public class PickupRequestService {
             return "No picked-up items found. No points added.";
         }
 
+
         user.setPoints(user.getPoints() + earnedPoints);
         userRepository.save(user);
 
@@ -201,4 +240,6 @@ public class PickupRequestService {
         mail.setText(body);
         mailSender.send(mail);
     }
+
+
 }
