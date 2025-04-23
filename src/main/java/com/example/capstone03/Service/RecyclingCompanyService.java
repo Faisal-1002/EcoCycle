@@ -45,6 +45,7 @@ public class RecyclingCompanyService {
         if (recyclingCompany == null){
             throw new ApiException("recyclingCompanyId is not fond");
         }
+        recyclingCompanyRepository.delete(recyclingCompany);
     }
 
 }

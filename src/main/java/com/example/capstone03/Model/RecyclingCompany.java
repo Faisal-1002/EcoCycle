@@ -37,10 +37,10 @@ public class RecyclingCompany {
     private String basic_activity;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @NotEmpty(message = "zone must be not empty")
-    private String zone;
+    @NotEmpty(message = "address must be not empty")
+    private String address;
 
-    @Column(columnDefinition = "varchar(20) not null")
+    @Column(columnDefinition = "varchar(50) not null")
     @NotEmpty(message = "email must be not empty")
     private String email;
 
