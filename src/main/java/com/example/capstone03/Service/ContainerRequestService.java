@@ -134,13 +134,15 @@ public class ContainerRequestService {
 
         if (collector == null)
             throw new ApiException("Collector is not found");
+
         if (request == null) {
             throw new ApiException("Container request not found");
+
         }
         if (!request.getStatus().equalsIgnoreCase("pending")) {
             throw new RuntimeException("Only pending requests can be accepted");
         }
-        Container container = containerRepository.findTop1ByAvailableTrueOrderByIdAsc();
+        Container container = containerRepository.findTopByAvailableTrue(); // ماتشتغل
         if (container == null) {
             throw new ApiException("No available container found");
         }
@@ -151,5 +153,6 @@ public class ContainerRequestService {
         container.setAvailable(false);
         containerRepository.save(container);
     }
+
 
 }

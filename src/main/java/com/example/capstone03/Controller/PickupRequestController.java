@@ -43,15 +43,14 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(pickupRequestService.getPickupRequestById(id));
     }
 
-    @PutMapping("/accept-pickup/{pickupId}/collector/{collectorId}")
-    public ResponseEntity<ApiResponse> acceptPickupRequest(@PathVariable Integer pickupId,@PathVariable Integer collectorId) {
-        pickupRequestService.acceptPickup(pickupId,collectorId);
-        return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted"));
-    }
+//    @PutMapping("/accept-pickup/{pickupId}/collector/{collectorId}")
+//    public ResponseEntity<ApiResponse> acceptPickupRequest(@PathVariable Integer pickupId,@PathVariable Integer collectorId) {
+//        pickupRequestService.acceptPickup(pickupId,collectorId);
+//        return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted"));
+//    }
   
     @PutMapping("/update/{pickupRequestId}/{collectorId}")
-    public ResponseEntity<?> acceptPickupRequest(@PathVariable Integer pickupRequestId,
-                                                 @PathVariable Integer collectorId) {
+    public ResponseEntity<?> acceptPickupRequest(@PathVariable Integer pickupRequestId, @PathVariable Integer collectorId) {
         pickupRequestService.acceptPickupRequest(pickupRequestId, collectorId);
         return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted successfully"));
     }
@@ -63,9 +62,10 @@ public class PickupRequestController {
     }
 
     //endpoint 11- Notify user: Pickup completed + Points updated
-    @PostMapping("/pickup-completed/{userId}")
-    public ResponseEntity<String> notifyAndComplete(@PathVariable Integer userId) {
-        String result = pickupRequestService.completePickupAndNotify(userId);
-        return ResponseEntity.ok(result);
-    }
+//    @PostMapping("/pickup-completed/{userId}")
+//    public ResponseEntity notifyAndComplete(@PathVariable Integer userId) {
+//        String result = pickupRequestService.completePickupAndNotify(userId);
+//        return ResponseEntity.ok(result);
+//    }
+
 }
