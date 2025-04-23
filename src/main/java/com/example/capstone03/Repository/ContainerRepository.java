@@ -5,11 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.domain.Pageable;
+
 @Repository
 public interface ContainerRepository extends JpaRepository<Container,Integer> {
 
     Container findContainerById(Integer id);
-    @Query("SELECT c FROM Container c WHERE c.is_available = true ORDER BY c.id ASC")
-    Container findFirstAvailableContainer();
+    Container findTop1ByAvailableTrueOrderByIdAsc();
 
 }

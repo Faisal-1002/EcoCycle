@@ -1,10 +1,7 @@
 package com.example.capstone03.Model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.util.List;
@@ -29,9 +26,9 @@ public class User {
     @Email(message = "Email must be valid")
     private String email;
 
-    @Column(columnDefinition = "varchar(100) not null")
-    @NotEmpty(message = "Password must not be empty")
-    @Size(min = 8, max = 20, message = "Password must be between 8 and 20 characters")
+    @Column(columnDefinition = "varchar(20) not null")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$", message = "Password must be at least 8 characters and include uppercase, lowercase, and a number")
+    @NotEmpty(message = "password cannot be empty")
     private String password;
 
     @Column(columnDefinition = "varchar(255) not null")
