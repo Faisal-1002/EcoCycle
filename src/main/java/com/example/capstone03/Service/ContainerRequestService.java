@@ -146,13 +146,14 @@ public class ContainerRequestService {
             throw new RuntimeException("Only pending requests can be accepted");
         }
 
-        request.setStatus("cancelled");
+        request.setStatus("In progress");
         containerRequestRepository.save(request);
     }
 
     // endpoint 15 - Deliver container (update status and delivery date)//faisal
 //    public void deliverContainer(Integer requestId) {
 //        ContainerRequest request = containerRequestRepository.findById(requestId);
+//
 //        if (request == null) {
 //            throw new ApiException("Container request not found");
 //        }

@@ -72,9 +72,9 @@ public class ContainerRequestController {
     }
 
     //endpoint 14 -  Accept container request
-    @PutMapping("/update-status/{id}")
-    public ResponseEntity<String> acceptContainerRequest(@PathVariable Integer id) {
-        containerRequestService.acceptContainerRequest(id);
+    @PutMapping("/update-status/{request_id}")
+    public ResponseEntity<String> acceptContainerRequest(@PathVariable Integer request_id) {
+        containerRequestService.acceptContainerRequest(request_id);
         return ResponseEntity.ok("Container request accepted successfully");
     }
 
