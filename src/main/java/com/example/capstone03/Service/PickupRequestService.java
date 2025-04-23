@@ -28,10 +28,9 @@ public class PickupRequestService {
 
     private final PickupRequestRepository pickupRequestRepository;
     private final CollectorRepository collectorRepository;
-    private final RecycleItemRepository recycleItemReposito;
     private final UserRepository userRepository;
     private final ContainerRequestRepository containerRequestRepository;
-    private final CollectorRepository collectorRepository;
+    private final RecycleItemRepository recycleItemRepository;
     private final JavaMailSender mailSender;
 
     public List<PickupRequest> getAllPickupRequests() {

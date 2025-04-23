@@ -1,5 +1,6 @@
 package com.example.capstone03.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -49,11 +50,14 @@ public class Collector {
     private String phone_number;
 
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
+    @JsonIgnore
     private Set<ContainerRequest> container_requests;
 
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
+    @JsonIgnore
     private Set<PickupRequest> pickup_request;
 
     @OneToMany(cascade =CascadeType.ALL ,mappedBy ="collector" )
+    @JsonIgnore
     private Set<CompanyRequest> company_request;
 }

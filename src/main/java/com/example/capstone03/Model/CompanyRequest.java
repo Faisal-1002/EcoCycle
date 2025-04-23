@@ -30,8 +30,8 @@ public class CompanyRequest {
     @NotNull(message = "quantity must be not empty")
     private Integer quantity;
 
-    @Column(columnDefinition = "varchar(10) not null")
-    @Pattern(regexp = "Requested|Auto-Requested|Processing|PickedUp|Delivered",
+    @Column(columnDefinition = "varchar(15) not null")
+    @Pattern(regexp = "requested|auto-requested|processing|pickedUp|delivered",
             message = "Status must be one of: Requested, Auto-Requested, PickedUp, Delivered")
     private String status;
 
@@ -41,6 +41,5 @@ public class CompanyRequest {
 
     @ManyToOne
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
-    @JsonIgnore
     private Collector collector;
 }
