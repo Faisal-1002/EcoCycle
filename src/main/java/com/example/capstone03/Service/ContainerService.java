@@ -2,7 +2,9 @@ package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
 import com.example.capstone03.Model.Container;
+import com.example.capstone03.Model.User;
 import com.example.capstone03.Repository.ContainerRepository;
+import com.example.capstone03.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,19 +15,22 @@ import java.util.List;
 public class ContainerService {
 
     private final ContainerRepository containerRepository;
+    private final UserRepository userRepository;
 
     public List<Container> getAllContainers() {
         return containerRepository.findAll();
     }
 
     public void addContainer(Container container) {
-        container.setAvailable(true);
-        container.setStatus_condition("new");
+        if (container.getStatus_condition().equalsIgnoreCase("damaged")) {
+            throw new ApiException("Invalid status condition. Must be 'new'");
+        }
+
         containerRepository.save(container);
     }
 
-    public void updateContainer(Integer containerId, Container updatedContainer) {
-        Container container = containerRepository.findContainerById(containerId);
+    public void updateContainer(Integer id, Container updatedContainer) {
+        Container container = containerRepository.findContainerById(id);
         if (container == null) {
             throw new ApiException("Container not found");
         }
@@ -37,8 +42,8 @@ public class ContainerService {
         containerRepository.save(container);
     }
 
-    public void deleteContainer(Integer containerId) {
-        Container container = containerRepository.findContainerById(containerId);
+    public void deleteContainer(Integer id) {
+        Container container = containerRepository.findContainerById(id);
         if (container == null) {
             throw new ApiException("Container not found");
         }
@@ -46,11 +51,17 @@ public class ContainerService {
         containerRepository.delete(container);
     }
 
-    public Container getContainerById(Integer containerId) {
-        Container container = containerRepository.findContainerById(containerId);
+    // 5. Get container by ID
+    public Container getContainerById(Integer id) {
+        Container container = containerRepository.findContainerById(id);
         if (container == null) {
             throw new ApiException("Container not found");
         }
         return container;
+    }
+
+    // 6. Get all available containers
+    public List<Container> getAvailableContainers() {
+        return containerRepository.findAllByAvailableTrue();
     }
 }

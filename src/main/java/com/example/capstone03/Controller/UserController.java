@@ -42,4 +42,10 @@ public class UserController {
     public ResponseEntity<?> getUserById(@PathVariable Integer id) {
         return ResponseEntity.status(200).body(userService.getUserById(id));
     }
+
+    @GetMapping("/requests/{userId}")
+    public ResponseEntity<?> getContainerRequestsByUserId(@PathVariable Integer userId) {
+        return ResponseEntity.status(200).body(userService.getRequestsByUserId(userId));
+    }
+
 }
