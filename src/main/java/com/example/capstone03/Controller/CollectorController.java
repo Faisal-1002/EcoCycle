@@ -38,6 +38,11 @@ public class CollectorController {
         return ResponseEntity.status(200).body(new ApiResponse("Collector deleted successfully"));
     }
 
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getCollectorById(@PathVariable Integer id) {
+        return ResponseEntity.status(200).body(collectorService.getCollectorById(id));
+    }
+
     @GetMapping("/assigned-containers/{collectorId}")
     public ResponseEntity<?> getAssignedContainerRequests(@PathVariable Integer collectorId) {
         return ResponseEntity.status(200).body(collectorService.getAssignedContainerRequests(collectorId));
