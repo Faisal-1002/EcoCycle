@@ -1,6 +1,7 @@
 package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
+import com.example.capstone03.DTO.PointsDTO;
 import com.example.capstone03.Model.PickupRequest;
 import com.example.capstone03.Model.RecycleItem;
 import com.example.capstone03.Model.User;
@@ -10,6 +11,7 @@ import com.example.capstone03.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -82,9 +84,34 @@ public class RecycleItemService {
         return recycleItem;
     }
     //endpoint 12 - User can view points history
-    public List<RecycleItem> getPointsHistory(Integer userId) {
-        return recycleItemRepository.findRecycleItemsByUserId(userId);
+    public PointsDTO getPointsHistory(Integer userId) {
+        List<RecycleItem> items = recycleItemRepository.findRecycleItemsByUserId(userId);
+
+        double totalWeight = 0;
+        LocalDate lastPickupDate = null;
+
+        for (RecycleItem item : items) {
+            if (item.getPickup_request() != null) {
+                String status = item.getPickup_request().getStatus();
+                System.out.println("Item status: " + status);
+
+                if ("PickedUp".equalsIgnoreCase(status)) {
+                    totalWeight += item.getWeight_kg();
+
+
+                    LocalDate pickupDate = item.getPickup_request().getPickup_date();
+                    System.out.println("Pickup date found: " + pickupDate);
+
+                    if (lastPickupDate == null || pickupDate.isAfter(lastPickupDate)) {
+                        lastPickupDate = pickupDate;
+                    }
+                }
+            }
+        }
+
+            int points = (int) totalWeight;
+            return new PointsDTO(totalWeight, points, lastPickupDate);
+        }
+
+
     }
-
-
-}

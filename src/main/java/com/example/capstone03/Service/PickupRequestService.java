@@ -162,41 +162,31 @@ public class PickupRequestService {
         pickupRequestRepository.save(pickupRequest);
     }
 
-    // endpoint 16 - View assigned pickup requests
+    // endpoint 16 - View assigned pickup requests #by abeer
     public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
         return pickupRequestRepository.findAllByCollectorId(collectorId);
+
     }
 
-    //endpoint 11- Notify user: Pickup completed + Points updated
-//    public void completePickupAndNotify(Integer userId) {
-//        User user = userRepository.findUserById(userId);
-//        if (user == null) {
-//            throw new ApiException("User not found");
-//        }
-//        List<RecycleItem> items = recycleItemRepository.findRecycleItemsByUserId(userId).stream().filter(item -> item.getPickup_request() != null
-//                        && item.getPickup_request().getStatus().equalsIgnoreCase("PickedUp")).toList();
-//
-//        double totalWeight = items.stream()
-//                .mapToDouble(RecycleItem::getWeight_kg).sum();
-//
-//        int earnedPoints = (int) totalWeight;
-//
-//        if (earnedPoints == 0) {
-//            return "No picked-up items found. No points added.";
-//        }
-//
-//        user.setPoints(user.getPoints() + earnedPoints);
-//        userRepository.save(user);
-//
-//        String message = "Pickup completed!\nYou earned " + earnedPoints + " points.\n\nThank you for recycling with us!";
-//        sendEmail(user.getEmail(), " Pickup Completed & Points Earned", message);
-//
-//        SimpleMailMessage message = new SimpleMailMessage();
-//        message.setTo(user.getEmail());
-//        message.setSubject("Pickup Scheduled");
-//        message.setText("Pickup completed!\nYou earned " + earnedPoints + " points.\n\nThank you for recycling with us!");
-//        message.setFrom("faisal.a.m.2012@gmail.com");
-//
-//        mailSender.send(message);
-//    }
+    //endpoint 11- Notify user: Pickup completed #by abeer
+    public void sendPickupNotification(Integer userId) {
+        User user = userRepository.findUserById(userId);
+        if (user == null) {
+            throw new ApiException("User not found");
+        }
+
+        String messageText = "Dear " + user.getName() + ",\n\n" +
+                "Your recycling pickup has been successfully completed!\n" +
+                "Points have been added to your account.\n\n" +
+                "Thank you for your commitment to recycling!";
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("Pickup Completed");
+        message.setText(messageText);
+        message.setFrom("faisal.a.m.2012@gmail.com");
+
+        mailSender.send(message);
+    }
+
 }

@@ -1,10 +1,12 @@
 package com.example.capstone03.Controller;
 
+import com.example.capstone03.Api.ApiException;
 import com.example.capstone03.Api.ApiResponse;
 import com.example.capstone03.Model.PickupRequest;
 import com.example.capstone03.Service.PickupRequestService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,17 +52,21 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted successfully"));
     }
 
-    // endpoint 16 - View assigned pickup requests
     @GetMapping("/assigned/{collectorId}")
     public ResponseEntity getAssignedPickupRequests(@PathVariable Integer collectorId) {
         return ResponseEntity.ok(pickupRequestService.getAssignedPickupRequests(collectorId));
     }
 
-    //endpoint 11- Notify user: Pickup completed + Points updated
-//    @PostMapping("/pickup-completed/{userId}")
-//    public ResponseEntity notifyAndComplete(@PathVariable Integer userId) {
-//        String result = pickupRequestService.completePickupAndNotify(userId);
-//        return ResponseEntity.ok(result);
-//    }
+   @PostMapping("/notify/{userId}")
+    public ResponseEntity<String> notifyPickupCompleted(@PathVariable Integer userId) {
+        try {
+            pickupRequestService.sendPickupNotification(userId);
+            return ResponseEntity.ok("Pickup notification sent successfully.");
+        } catch (ApiException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong.");
+        }
+    }
 
 }

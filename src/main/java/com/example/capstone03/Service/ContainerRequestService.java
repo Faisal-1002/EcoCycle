@@ -9,8 +9,8 @@ import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.ContainerRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.UserRepository;
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
+//import com.twilio.Twilio;
+//import com.twilio.rest.api.v2010.account.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
@@ -97,7 +97,7 @@ public class ContainerRequestService {
         mailSender.send(message);
     }
 
-    //endpoint 13 - View all container requests
+    //endpoint 13 - View all pending requests
     public List<ContainerRequest> getPendingRequests() {
         return containerRequestRepository.findContainerRequestByStatus("Pending");
     }
@@ -126,19 +126,19 @@ public class ContainerRequestService {
         container.setAvailable(false);
         containerRepository.save(container);
         String message = "Hi, " + user.getName() + " your request #" + request.getId() + " has been accepted";
-        sendWhatsAppMessage(user.getPhone_number(), message);
+        //sendWhatsAppMessage(user.getPhone_number(), message);
     }
 
-    //15. Send accept notification through Whatsapp
-    public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
-        Twilio.init(twilioSid, twilioToken);
-        phoneNumber = "+966" + phoneNumber.substring(1);
-        Message.creator(
-                new com.twilio.type.PhoneNumber("whatsapp:" + phoneNumber),
-                new com.twilio.type.PhoneNumber(twilioFrom),
-                messageBody
-        ).create();
-    }
+//    //15. Send accept notification through Whatsapp
+//    public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
+//        Twilio.init(twilioSid, twilioToken);
+//        phoneNumber = "+966" + phoneNumber.substring(1);
+//        Message.creator(
+//                new com.twilio.type.PhoneNumber("whatsapp:" + phoneNumber),
+//                new com.twilio.type.PhoneNumber(twilioFrom),
+//                messageBody
+//        ).create();
+//    }
 
     //3. Deliver Container
     public void deliverContainer(Integer collectorId, Integer containerRequestId) {
