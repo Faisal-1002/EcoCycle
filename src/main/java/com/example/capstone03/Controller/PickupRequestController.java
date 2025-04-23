@@ -48,4 +48,24 @@ public class PickupRequestController {
         pickupRequestService.acceptPickup(pickupId,collectorId);
         return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted"));
     }
+  
+    @PutMapping("/update/{pickupRequestId}/{collectorId}")
+    public ResponseEntity<?> acceptPickupRequest(@PathVariable Integer pickupRequestId,
+                                                 @PathVariable Integer collectorId) {
+        pickupRequestService.acceptPickupRequest(pickupRequestId, collectorId);
+        return ResponseEntity.status(200).body(new ApiResponse("Pickup request accepted successfully"));
+    }
+
+    // endpoint 16 - View assigned pickup requests
+    @GetMapping("/assigned/{collectorId}")
+    public ResponseEntity getAssignedPickupRequests(@PathVariable Integer collectorId) {
+        return ResponseEntity.ok(pickupRequestService.getAssignedPickupRequests(collectorId));
+    }
+
+    //endpoint 11- Notify user: Pickup completed + Points updated
+    @PostMapping("/pickup-completed/{userId}")
+    public ResponseEntity<String> notifyAndComplete(@PathVariable Integer userId) {
+        String result = pickupRequestService.completePickupAndNotify(userId);
+        return ResponseEntity.ok(result);
+    }
 }

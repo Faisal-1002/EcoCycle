@@ -20,13 +20,13 @@ public class RecycleItemController {
         return ResponseEntity.status(200).body(recycleItemService.getAllRecycleItems());
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<?> addRecycleItem(@RequestBody @Valid RecycleItem recycleItem) {
-        recycleItemService.addRecycleItem(recycleItem);
+    @PostMapping("/add/{pickupRequestId}")
+    public ResponseEntity<?> addRecycleItem(@PathVariable Integer pickupRequestId, @RequestBody @Valid RecycleItem recycleItem) {
+        recycleItemService.addRecycleItem(pickupRequestId, recycleItem);
         return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully"));
     }
 
-    // 10. System awards points (1kg = 1 point) - automatic
+    // endpoint 10 - System awards points (1kg = 1 point) - automatic
     @PostMapping("/add-point")
     public ResponseEntity addRecycleItemToPickupRequest(@RequestBody @Valid Integer pickupRequestId, RecycleItem recycleItem) {
         recycleItemService.addRecycleItemToPickupRequest(pickupRequestId,recycleItem);
@@ -51,7 +51,7 @@ public class RecycleItemController {
     }
 
     //endpoint 12 - User can view points history
-    @GetMapping("/get/{userId}")
+    @GetMapping("/get-point/{userId}")
     public ResponseEntity getPointsHistory(@PathVariable Integer userId) {
         return ResponseEntity.ok(recycleItemService.getPointsHistory(userId));
     }

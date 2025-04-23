@@ -2,18 +2,19 @@ package com.example.capstone03.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PickupRequest {
@@ -22,15 +23,15 @@ public class PickupRequest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "date")
-    private LocalDate request_date;
+    @Column(columnDefinition = "timestamp")
+    private LocalDateTime request_date;
 
     @Column(columnDefinition = "date")
     private LocalDate pickup_date;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @Pattern(regexp = "Requested|Auto-Requested|Processing|PickedUp",
-            message = "Status must be one of: Requested, Auto-Requested, PickedUp, Delivered")
+    @Pattern(regexp = "requested|auto_requested|processing|pickedup",
+            message = "Status must be one of: requested, auto_requested, pickedup, processing")
     private String status;
 
     @ManyToOne
@@ -39,7 +40,7 @@ public class PickupRequest {
     private User user;
 
     @OneToMany(mappedBy = "pickup_request", cascade = CascadeType.ALL)
-    private List<RecycleItem> recycleItems;
+    private List<RecycleItem> recycle_items;
 
     @ManyToOne
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
