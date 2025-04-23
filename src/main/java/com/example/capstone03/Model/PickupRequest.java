@@ -44,6 +44,5 @@ public class PickupRequest {
 
     @ManyToOne
     @JoinColumn(name = "collector_id", referencedColumnName = "id")
-    @JsonIgnore
     private Collector collector;
 }
