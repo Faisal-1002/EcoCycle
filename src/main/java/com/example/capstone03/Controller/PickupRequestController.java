@@ -57,9 +57,10 @@ public class PickupRequestController {
     }
 
     //endpoint 11- Notify user: Pickup completed + Points updated
-    @PostMapping("/pickup-completed/{userId}")
-    public ResponseEntity<String> notifyAndComplete(@PathVariable Integer userId) {
-        String result = pickupRequestService.completePickupAndNotify(userId);
-        return ResponseEntity.ok(result);
-    }
+//    @PostMapping("/pickup-completed/{userId}")
+//    public ResponseEntity notifyAndComplete(@PathVariable Integer userId) {
+//        String result = pickupRequestService.completePickupAndNotify(userId);
+//        return ResponseEntity.ok(result);
+//    }
+
 }

@@ -180,4 +180,36 @@ public class ContainerRequestService {
         mailSender.send(message);
     }
 
+    //endpoint 13 - View all container requests
+    public List<ContainerRequest> getPendingRequests() {
+        return containerRequestRepository.findContainerRequestByStatus("Pending");
+    }
+
+    //endpoint 14 -  Accept container request
+    public void acceptContainerRequest(Integer containerRequestId, Integer collectorId) {
+        ContainerRequest request = containerRequestRepository.findContainerRequestById(containerRequestId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+
+        if (collector == null)
+            throw new ApiException("Collector is not found");
+
+        if (request == null) {
+            throw new ApiException("Container request not found");
+
+        }
+        if (!request.getStatus().equalsIgnoreCase("pending")) {
+            throw new RuntimeException("Only pending requests can be accepted");
+        }
+        Container container = containerRepository.findTopByAvailableTrue(); // ماتشتغل
+        if (container == null) {
+            throw new ApiException("No available container found");
+        }
+        request.setContainer(container);
+        request.setCollector(collector);
+        request.setStatus("processing");
+        containerRequestRepository.save(request);
+        container.setAvailable(false);
+        containerRepository.save(container);
+    }
+
 }
