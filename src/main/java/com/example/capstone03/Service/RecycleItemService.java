@@ -32,6 +32,7 @@ public class RecycleItemService {
             throw new ApiException("Pickup request not found");
         }
 
+        recycleItem.setStatus("processed");
         recycleItem.setPickup_request(pickupRequest);
         recycleItemRepository.save(recycleItem);
     }
