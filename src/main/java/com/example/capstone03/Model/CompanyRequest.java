@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -31,9 +33,17 @@ public class CompanyRequest {
     private Integer quantity;
 
     @Column(columnDefinition = "varchar(10) not null")
-    @Pattern(regexp = "Requested|Auto-Requested|Processing|PickedUp|Delivered",
-            message = "Status must be one of: Requested, Auto-Requested, PickedUp, Delivered")
+    @Pattern(regexp = "requested|auto-requested|processing|delivered",
+            message = "Status must be one of: Requested, Auto-Requested, Delivered")
     private String status;
+
+
+    @Column(columnDefinition = "date")
+    private LocalDate request_date;
+
+    @Column(columnDefinition = "date")
+    private LocalDate delivery_date;
+
 
     @ManyToOne
     @JsonIgnore

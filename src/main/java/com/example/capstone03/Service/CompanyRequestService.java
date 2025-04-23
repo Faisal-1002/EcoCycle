@@ -7,6 +7,8 @@ import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.CompanyRequestRepository;
 import com.example.capstone03.Repository.RecyclingCompanyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,6 +21,8 @@ public class CompanyRequestService {
     private final CompanyRequestRepository companyRequestRepository;
     private final RecyclingCompanyRepository recyclingCompanyRepository;
     private final CollectorRepository collectorRepository;
+    private final MailSender mailSender;
+
 
     public List<CompanyRequest> getAllCompanyRequest(){
         return companyRequestRepository.findAll();
@@ -32,33 +36,13 @@ public class CompanyRequestService {
         }
 
         companyRequest.setRecycling_company(recyclingCompany);
-        companyRequest.setStatus("Requested");
+        companyRequest.setStatus("requested");
+        companyRequest.setRequest_date(LocalDate.now());
         companyRequestRepository.save(companyRequest);
+        sendCompanyRequestReceivedEmail(recyclingCompanyId);
 
     }
 
-    //no Duplication
-
-//    public void addCompanyRequests(Integer recyclingCompanyId ,CompanyRequest companyRequest){
-//        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recyclingCompanyId);
-//
-//        if (recyclingCompany == null){
-//            throw new ApiException("Recycling Company not found");
-//        }
-//
-//        List<CompanyRequest> requests = companyRequestRepository.findAll();
-//        for (CompanyRequest request : requests){
-//            if (request.getRecycling_company().getId().equals(recyclingCompanyId)  && request.getStatus().equals("Requested")){
-//                throw new ApiException("Recycling Company have already requested ");
-//            }
-//        }
-//
-//        companyRequest.setStatus("Requested");
-//        companyRequest.setRecycling_company(recyclingCompany);
-//
-//        companyRequestRepository.save(companyRequest);
-//
-//    }
 
     public void updateCompanyRequest(Integer id , CompanyRequest companyRequest){
         CompanyRequest oldCompanyRequest = companyRequestRepository.findCompanyRequestById(id);
@@ -81,19 +65,25 @@ public class CompanyRequestService {
     }
 
     //=================================================
+    //1.
+
     //20  View pending company requests
 
     public List<CompanyRequest> pendingRequests(){
         List<CompanyRequest> requests = companyRequestRepository.findAll();
         List<CompanyRequest> pendingRequest = new ArrayList<>();
         for (CompanyRequest request : requests){
-            if (request.getStatus().equals("Requested")){
+            if (request.getStatus().equals("requested") || request.getStatus().equals("auto-requested")){
                 pendingRequest.add(request);
             }
         }
 
         return pendingRequest;
     }
+
+
+
+    //2.
 
     //21  Accept company delivery request
 
@@ -108,17 +98,48 @@ public class CompanyRequestService {
             throw new ApiException("collector not found");
         }
 
-        if (companyRequest.getStatus().equals("Processing") ||
-                companyRequest.getStatus().equals("PickedUp") ||
+        if (companyRequest.getStatus().equals("processing") ||
                 companyRequest.getStatus().equals("Delivered")) {
             throw new ApiException("Company request has already been accepted or is in progress by " +companyRequest.getCollector().getName());
         }
 
         companyRequest.setCollector(collector);
-        companyRequest.setStatus("Processing");
+        companyRequest.setStatus("processing");
+        companyRequest.setDelivery_date(LocalDate.now().plusWeeks(1));
         companyRequestRepository.save(companyRequest);
     }
 
+
+    //3.
+
+    public void deliverRequest(Integer companyRequestId, Integer collectorId){
+        CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
+
+        if (companyRequest == null) {
+            throw new ApiException("Company Request not found");
+        }
+        if (collector == null){
+            throw new ApiException("Collector not found");
+        }
+        if (!collector.getId().equals(companyRequest.getCollector().getId())){
+            throw new ApiException("Collector is not allowed to deliver");
+        }
+
+        if (companyRequest.getStatus().equals("requested") || companyRequest.getStatus().equals("auto-requested") || companyRequest.getStatus().equals("delivered")) {
+            throw new ApiException( companyRequest.getRecycling_company().getName() + " Company request is not accepted yet");
+        }
+
+
+        companyRequest.setStatus("delivered");
+        companyRequest.setDelivery_date(LocalDate.now());
+        companyRequestRepository.save(companyRequest);
+        sendCompanyRequestDeliveredEmail(companyRequest.getRecycling_company().getId());
+
+    }
+
+
+    //4.
 
     //22 View completed delivery history
 
@@ -127,11 +148,41 @@ public class CompanyRequestService {
         List<CompanyRequest> deliveredRequest = new ArrayList<>();
 
         for (CompanyRequest request : requests){
-            if (request.getStatus().equals("Delivered")){
+            if (request.getStatus().equals("delivered")){
                 deliveredRequest.add(request);
             }
         }
 
         return deliveredRequest;
     }
+
+    //5.
+
+    public void sendCompanyRequestReceivedEmail(Integer recycleCompanyId) {
+        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recycleCompanyId);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(recyclingCompany.getEmail());
+        message.setSubject("Company Request Received");
+        message.setText("Dear " + recyclingCompany.getName() + ",\n\nWe have received your request. Our collectors will process it shortly.\n\nThank you for using our service!");
+        message.setFrom("faisal.a.m.2012@gmail.com");
+        mailSender.send(message);
+    }
+
+    //6.
+    public void sendCompanyRequestDeliveredEmail(Integer recycleCompanyId) {
+        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recycleCompanyId);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(recyclingCompany.getEmail());
+        message.setSubject("Company Request Delivered");
+        message.setText("Dear " + recyclingCompany.getName() + ",\n\n" +
+                "We are pleased to inform you that your request has been successfully delivered by our collector.\n\n" +
+                "Thank you for using our service!\n\n" +
+                "Best regards,\nYour Service Team");
+        message.setFrom("faisal.a.m.2012@gmail.com");
+        mailSender.send(message);
+    }
+
+
+
+
 }

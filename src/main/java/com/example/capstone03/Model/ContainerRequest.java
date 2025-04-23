@@ -25,7 +25,7 @@ public class ContainerRequest {
     private LocalDate delivery_date;
 
     @Column(columnDefinition = "varchar(20)")
-    @Pattern(regexp = "^(pending|processing|delivered)")
+    @Pattern(regexp = "^(pending|processing|delivered|cancelled)")
     private String status;
 
     @Column(columnDefinition = "varchar(255)")
