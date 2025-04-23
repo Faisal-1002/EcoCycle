@@ -113,7 +113,7 @@ public class RecycleItemService {
 
             int points = (int) totalWeight;
             return new PointsDTO(totalWeight, points, lastPickupDate);
-        }
+
     }
 
 }
