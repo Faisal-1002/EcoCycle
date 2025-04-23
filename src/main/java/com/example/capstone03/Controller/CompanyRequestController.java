@@ -56,5 +56,13 @@ public class CompanyRequestController {
         return ResponseEntity.ok(companyRequestService.getDeliveredRequest());
     }
 
+    @PutMapping("/deliver-company-request/{companyRequestId}/collector/{collectorId}")
+    public ResponseEntity<ApiResponse> deliverRecyclingCompanyRequest(@PathVariable Integer companyRequestId,@PathVariable Integer collectorId) {
+        companyRequestService.deliverRequest(companyRequestId,collectorId);
+        return ResponseEntity.status(200).body(new ApiResponse("recycling company request delivered"));
+    }
+
+
+
 
 }
