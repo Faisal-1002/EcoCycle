@@ -1,11 +1,7 @@
 package com.example.capstone03.Service;
 
 import com.example.capstone03.Api.ApiException;
-import com.example.capstone03.Model.Collector;
-import com.example.capstone03.Model.ContainerRequest;
-import com.example.capstone03.Model.PickupRequest;
-import com.example.capstone03.Model.RecycleItem;
-import com.example.capstone03.Model.User;
+import com.example.capstone03.Model.*;
 import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.PickupRequestRepository;
@@ -227,6 +223,7 @@ public class PickupRequestService {
             return "No picked-up items found. No points added.";
         }
 
+
         user.setPoints(user.getPoints() + earnedPoints);
         userRepository.save(user);
 
@@ -243,4 +240,6 @@ public class PickupRequestService {
         mail.setText(body);
         mailSender.send(mail);
     }
+
+
 }
