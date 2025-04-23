@@ -1,11 +1,8 @@
 package com.example.capstone03.Controller;
 
 import com.example.capstone03.Api.ApiResponse;
-import com.example.capstone03.DTO.ContainerDTO;
 import com.example.capstone03.Model.Collector;
-import com.example.capstone03.Repository.ContainerRepository;
 import com.example.capstone03.Service.CollectorService;
-import com.example.capstone03.Service.ContainerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -30,8 +30,8 @@ public class PickupRequest {
     private LocalDate pickup_date;
 
     @Column(columnDefinition = "varchar(20) not null")
-    @Pattern(regexp = "requested|auto_requested|pickedup",
-            message = "Status must be one of: requested, auto_requested, pickedup, delivered")
+    @Pattern(regexp = "requested|auto_requested|processing|pickedup",
+            message = "Status must be one of: requested, auto_requested, pickedup, processing")
     private String status;
 
     @ManyToOne

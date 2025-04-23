@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/company-request")
 @RequiredArgsConstructor
@@ -19,9 +21,9 @@ public class CompanyRequestController {
     public ResponseEntity getAllCompanyRequest(){
         return ResponseEntity.ok(companyRequestService.getAllCompanyRequest());
     }
-    @PostMapping("/add")
-    public ResponseEntity addCompanyRequest(@RequestBody @Valid CompanyRequest companyRequest){
-        companyRequestService.addCompanyRequest(companyRequest);
+    @PostMapping("/add/{recyclingCompanyId}")
+    public ResponseEntity addCompanyRequest(@PathVariable Integer recyclingCompanyId , @RequestBody @Valid CompanyRequest companyRequest){
+        companyRequestService.addCompanyRequest(recyclingCompanyId,companyRequest);
         return ResponseEntity.ok(new ApiResponse("added successfully"));
     }
 
@@ -37,4 +39,22 @@ public class CompanyRequestController {
         return ResponseEntity.ok(new ApiResponse("delete successfully"));
 
     }
+
+    @GetMapping("/get-pending-requests")
+    public ResponseEntity<List> getPendingRequests(){
+        return ResponseEntity.ok(companyRequestService.pendingRequests());
+    }
+
+    @PutMapping("/accept-company-request/{companyRequestId}/collector/{collectorId}")
+    public ResponseEntity<ApiResponse> acceptRecyclingCompanyRequest(@PathVariable Integer companyRequestId,@PathVariable Integer collectorId) {
+        companyRequestService.acceptCompanyRequest(companyRequestId,collectorId);
+        return ResponseEntity.status(200).body(new ApiResponse("recycling company request accepted"));
+    }
+
+    @GetMapping("/get-delivered-requests")
+    public ResponseEntity<List> getDeliveredRequests(){
+        return ResponseEntity.ok(companyRequestService.getDeliveredRequest());
+    }
+
+
 }
