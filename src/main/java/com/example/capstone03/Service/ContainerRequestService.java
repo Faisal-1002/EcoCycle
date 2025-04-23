@@ -10,12 +10,12 @@ import com.example.capstone03.Repository.ContainerRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -89,13 +89,8 @@ public class ContainerRequestService {
             throw new ApiException("Container request not found");
         }
 
-        if (!"pending".equals(containerRequest.getStatus())) {
-            throw new ApiException("Only pending requests can be delivered");
-        }
-
-        Container container = containerRepository.findFirstAvailableContainer();
-        if (container == null) {
-            throw new ApiException("No available container found");
+        if (!"processing".equals(containerRequest.getStatus())) {
+            throw new ApiException("Only processing requests can be delivered");
         }
 
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -103,14 +98,11 @@ public class ContainerRequestService {
             throw new ApiException("Collector not found");
         }
 
-        containerRequest.setContainer(container);
         containerRequest.setCollector(collector);
         containerRequest.setDelivery_date(LocalDate.now());
         containerRequest.setStatus("delivered");
         containerRequestRepository.save(containerRequest);
 
-        container.setIs_available(false);
-        containerRepository.save(container);
         notifyContainerDelivered(containerRequest.getUser().getId());
     }
 
@@ -136,36 +128,28 @@ public class ContainerRequestService {
     }
 
     //endpoint 14 -  Accept container request
-    public void acceptContainerRequest(Integer requestId) {
-        ContainerRequest request = containerRequestRepository.findContainerRequestById(requestId);
+    public void acceptContainerRequest(Integer containerRequestId, Integer collectorId) {
+        ContainerRequest request = containerRequestRepository.findContainerRequestById(containerRequestId);
+        Collector collector = collectorRepository.findCollectorById(collectorId);
 
+        if (collector == null)
+            throw new ApiException("Collector is not found");
         if (request == null) {
             throw new ApiException("Container request not found");
         }
-        if (!request.getStatus().equalsIgnoreCase("Pending")) {
+        if (!request.getStatus().equalsIgnoreCase("pending")) {
             throw new RuntimeException("Only pending requests can be accepted");
         }
-
-        request.setStatus("cancelled");
+        Container container = containerRepository.findTop1ByAvailableTrueOrderByIdAsc();
+        if (container == null) {
+            throw new ApiException("No available container found");
+        }
+        request.setContainer(container);
+        request.setCollector(collector);
+        request.setStatus("processing");
         containerRequestRepository.save(request);
+        container.setAvailable(false);
+        containerRepository.save(container);
     }
-
-    // endpoint 15 - Deliver container (update status and delivery date)//faisal
-//    public void deliverContainer(Integer requestId) {
-//        ContainerRequest request = containerRequestRepository.findById(requestId);
-//        if (request == null) {
-//            throw new ApiException("Container request not found");
-//        }
-//        if (!request.getStatus().equalsIgnoreCase("Accepted")) {
-//            throw new RuntimeException("Only accepted requests can be delivered");
-//        }
-//
-//        request.setStatus("delivered");
-//        request.setDelivery_date(LocalDateTime.now());
-//
-//        containerRequestRepository.save(request);
-//    }
-
-
 
 }

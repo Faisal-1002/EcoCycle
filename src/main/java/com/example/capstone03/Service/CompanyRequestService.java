@@ -61,6 +61,7 @@ public class CompanyRequestService {
         if (companyRequest == null){
             throw new ApiException("companyRequestId is not fond");
         }
+        companyRequestRepository.delete(companyRequest);
     }
 
     //=================================================
