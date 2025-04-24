@@ -51,7 +51,7 @@ public class ContainerService {
         containerRepository.delete(container);
     }
 
-    // 5. Get container by ID
+    // 3. Get container by ID
     public Container getContainerById(Integer id) {
         Container container = containerRepository.findContainerById(id);
         if (container == null) {
@@ -60,7 +60,7 @@ public class ContainerService {
         return container;
     }
 
-    // 6. Get all available containers
+    // 4. Get all available containers
     public List<Container> getAvailableContainers() {
         return containerRepository.findAllByAvailableTrue();
     }

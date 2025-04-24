@@ -48,7 +48,7 @@ public class ContainerRequestController {
     @PutMapping("/accept/container-request-id/{containerRequestId}/collector-id/{collectorId}")
     public ResponseEntity acceptContainerRequest(@PathVariable Integer containerRequestId, @PathVariable Integer collectorId) {
         containerRequestService.acceptContainerRequest(containerRequestId, collectorId);
-        return ResponseEntity.ok("Container request accepted successfully");
+        return ResponseEntity.status(200).body(new ApiResponse("Container request accepted successfully"));
     }
 
     @PutMapping("/deliver/collector-id/{collectorId}/container-request-id/{containerRequestId}")

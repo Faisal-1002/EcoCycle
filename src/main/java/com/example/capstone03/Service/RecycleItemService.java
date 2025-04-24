@@ -26,33 +26,19 @@ public class RecycleItemService {
         return recycleItemRepository.findAll();
     }
 
-    public void addRecycleItem(Integer pickupRequestId, RecycleItem recycleItem) {
-        PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
-        if (pickupRequest == null) {
-            throw new ApiException("Pickup request not found");
-        }
-
-        recycleItem.setStatus("processed");
-        recycleItem.setPickup_request(pickupRequest);
-        recycleItemRepository.save(recycleItem);
-    }
-
-    // 26. System awards points (1kg = 1 point) - automatic
+    // 26. Add items to pick up request
     public void addRecycleItemToPickupRequest(Integer pickupRequestId, RecycleItem recycleItem) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null){
                 throw new ApiException("Pickup request not found");
         }
+        if (!pickupRequest.getStatus().equalsIgnoreCase("processing")){
+            throw new ApiException("Pickup request is not processing");
+        }
+        recycleItem.setStatus("picked");
         recycleItem.setPickup_request(pickupRequest);
         recycleItemRepository.save(recycleItem);
-
-        // update points
-        User user = pickupRequest.getUser();
-        int points = recycleItem.getWeight_kg().intValue();
-        user.setPoints(points);
-        userRepository.save(user);
     }
-
 
     public void updateRecycleItem(Integer id, RecycleItem updatedRecycleItem) {
         RecycleItem recycleItem = recycleItemRepository.findRecycleItemById(id);
@@ -85,7 +71,7 @@ public class RecycleItemService {
         return recycleItem;
     }
   
-    //endpoint 12 - User can view points history
+    // 28. User can view points history
     public PointsDTO getPointsHistory(Integer userId) {
         List<RecycleItem> items = recycleItemRepository.findRecycleItemsByUserId(userId);
 

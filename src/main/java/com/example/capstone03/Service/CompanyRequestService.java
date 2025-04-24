@@ -7,7 +7,10 @@ import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.CompanyRequestRepository;
 import com.example.capstone03.Repository.RecycleItemRepository;
 import com.example.capstone03.Repository.RecyclingCompanyRepository;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailSender;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -27,11 +30,19 @@ public class CompanyRequestService {
     private final RecycleItemRepository recycleItemRepository;
     private final MailSender mailSender;
 
+    @Value("${twilio.account_sid}")
+    private String twilioSid;
+    @Value("${twilio.auth_token}")
+    private String twilioToken;
+    @Value("${twilio.phone_number}")
+    private String twilioFrom;
+
 
     public List<CompanyRequest> getAllCompanyRequest(){
         return companyRequestRepository.findAll();
     }
 
+    // 29. Add company request
     public void addCompanyRequest(Integer recyclingCompanyId,CompanyRequest companyRequest){
         RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recyclingCompanyId);
 
@@ -43,7 +54,11 @@ public class CompanyRequestService {
         companyRequest.setStatus("requested");
         companyRequest.setRequest_date(LocalDate.now());
         companyRequestRepository.save(companyRequest);
-        sendCompanyRequestReceivedEmail(recyclingCompanyId);
+
+        String subject = "Company Request Received";
+        String body = "Dear " + recyclingCompany.getName() + ",\n\nWe have received your request. Our collectors will process it shortly.\n\nThank you for using our service!";
+        String from = "faisal.a.m.2012@gmail.com";
+        sendEmailToUser(recyclingCompany.getId(), subject, body, from);
 
     }
 
@@ -67,7 +82,7 @@ public class CompanyRequestService {
         companyRequestRepository.delete(companyRequest);
     }
 
-    // 29. View pending company requests
+    // 30. View pending company requests
     public List<CompanyRequest> pendingRequests(){
         List<CompanyRequest> requests = companyRequestRepository.findAll();
         List<CompanyRequest> pendingRequest = new ArrayList<>();
@@ -80,7 +95,7 @@ public class CompanyRequestService {
         return pendingRequest;
     }
 
-    // 30. Accept company delivery request
+    // 31. Accept company delivery request
     public void acceptCompanyRequest(Integer companyRequestId, Integer collectorId){
         CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -101,9 +116,12 @@ public class CompanyRequestService {
         companyRequest.setStatus("processing");
         companyRequest.setDelivery_date(LocalDate.now().plusWeeks(1));
         companyRequestRepository.save(companyRequest);
+
+        String message = "Hi, " + companyRequest.getRecycling_company().getName() + " your request #" + companyRequest.getId() + " has been accepted by " + collector.getName() + " collector.";
+        sendWhatsAppMessage(companyRequest.getRecycling_company().getPhone_number(), message);
     }
 
-    // 31. Delivery
+    // 32. Delivery
     public void deliverRequest(Integer companyRequestId, Integer collectorId){
         CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -143,17 +161,21 @@ public class CompanyRequestService {
             throw new ApiException("Pickup quantity is less than the requested quantity.collector needs to pick up more");
         }
 
-
-
-
         companyRequest.setStatus("delivered");
         companyRequest.setDelivery_date(LocalDate.now());
         companyRequestRepository.save(companyRequest);
-        sendCompanyRequestDeliveredEmail(companyRequest.getRecycling_company().getId());
+
+        String subject = "Company Request Delivered";
+        String body = "Dear " + companyRequest.getRecycling_company().getName() + ",\n\n" +
+                "We are pleased to inform you that your request has been successfully delivered by our collector.\n\n" +
+                "Thank you for using our service!\n\n" +
+                "Best regards,\nYour Service Team";
+        String from = "faisal.a.m.2012@gmail.com";
+        sendEmailToUser(companyRequest.getRecycling_company().getId(), subject, body, from);
 
     }
 
-    // 32. View completed delivery history
+    // 33. View completed delivery history
     public List<CompanyRequest> getDeliveredRequest(){
         List<CompanyRequest> requests = companyRequestRepository.findAll();
         List<CompanyRequest> deliveredRequest = new ArrayList<>();
@@ -167,29 +189,26 @@ public class CompanyRequestService {
         return deliveredRequest;
     }
 
-    // 33. Send email
-    public void sendCompanyRequestReceivedEmail(Integer recycleCompanyId) {
-        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recycleCompanyId);
+    // 34. Send email
+    public void sendEmailToUser(Integer companyId, String subject, String body, String from) {
+        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(companyId);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(recyclingCompany.getEmail());
-        message.setSubject("Company Request Received");
-        message.setText("Dear " + recyclingCompany.getName() + ",\n\nWe have received your request. Our collectors will process it shortly.\n\nThank you for using our service!");
-        message.setFrom("faisal.a.m.2012@gmail.com");
+        message.setSubject(subject);
+        message.setText(body);
+        message.setFrom(from);
         mailSender.send(message);
     }
 
-    // 34. Send email
-    public void sendCompanyRequestDeliveredEmail(Integer recycleCompanyId) {
-        RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recycleCompanyId);
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(recyclingCompany.getEmail());
-        message.setSubject("Company Request Delivered");
-        message.setText("Dear " + recyclingCompany.getName() + ",\n\n" +
-                "We are pleased to inform you that your request has been successfully delivered by our collector.\n\n" +
-                "Thank you for using our service!\n\n" +
-                "Best regards,\nYour Service Team");
-        message.setFrom("faisal.a.m.2012@gmail.com");
-        mailSender.send(message);
+    // 35. send whatsapp
+    public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
+        Twilio.init(twilioSid, twilioToken);
+        phoneNumber = "+966" + phoneNumber.substring(1);
+        Message.creator(
+                new com.twilio.type.PhoneNumber("whatsapp:" + phoneNumber),
+                new com.twilio.type.PhoneNumber(twilioFrom),
+                messageBody
+        ).create();
     }
 
 }

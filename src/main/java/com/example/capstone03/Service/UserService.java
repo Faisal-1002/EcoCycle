@@ -21,7 +21,7 @@ public class UserService {
     }
 
     public void addUser(User user) {
-        user.setPoints(0);
+        user.setPoints(0.0);
         userRepository.save(user);
     }
 
