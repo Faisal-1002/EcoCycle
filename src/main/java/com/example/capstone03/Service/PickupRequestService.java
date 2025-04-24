@@ -42,7 +42,7 @@ public class PickupRequestService {
         return pickupRequestRepository.findAll();
     }
 
-    // 18. Request pickup manually
+    // 18. Request pickup manually - Abdulraouf
     public void addPickupRequest(Integer userId, PickupRequest pickupRequest) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -96,7 +96,7 @@ public class PickupRequestService {
         pickupRequestRepository.delete(pickupRequest);
     }
 
-    // 19. Get pickup request by ID
+    // 19. Get pickup request by ID - Abdulraouf
     public PickupRequest getPickupRequestById(Integer pickupRequestId) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -105,7 +105,7 @@ public class PickupRequestService {
         return pickupRequest;
     }
 
-    // 20. Auto pickup request if 7 days passes with no manual request
+    // 20. Auto pickup request if 7 days passes with no manual request - Faisal
     @Scheduled(cron = "0 0 0 * * ?")
     public void autoCreatePickupRequestsAfter7Days() {
         List<ContainerRequest> deliveredContainers = containerRequestRepository.findAllByStatus("delivered");
@@ -146,7 +146,7 @@ public class PickupRequestService {
         }
     }
 
-    // 21. Accept a pickup request
+    // 21. Accept a pickup request - Abdulraouf
     public void acceptPickupRequest(Integer pickupRequestId, Integer collectorId) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null) {
@@ -171,7 +171,7 @@ public class PickupRequestService {
         sendWhatsAppMessage(pickupRequest.getUser().getPhone_number(), messageBody);
     }
 
-    // 22. Picked up request
+    // 22. Picked up request - Faisal
     public void pickedUpRequest(Integer pickupId, Integer collectorId){
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -211,7 +211,7 @@ public class PickupRequestService {
 
     }
 
-    // 23. View assigned pickup requests
+    // 23. View assigned pickup requests - Abdulraouf
     public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
         return pickupRequestRepository.findAllByCollectorId(collectorId);
 
@@ -242,7 +242,7 @@ public class PickupRequestService {
 //        sendWhatsAppMessage(user.getPhone_number(), message);
 //    }
 
-    // 24. Send email
+    // 24. Send email - Abeer
     public void sendEmailToUser(Integer userId, String subject, String body, String from) {
         User user = userRepository.findUserById(userId);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -253,7 +253,7 @@ public class PickupRequestService {
         mailSender.send(message);
     }
 
-    // 25.Send whatsapp
+    // 25.Send whatsapp - Abeer
     public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
         Twilio.init(twilioSid, twilioToken);
         phoneNumber = "+966" + phoneNumber.substring(1);

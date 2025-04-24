@@ -42,7 +42,7 @@ public class ContainerRequestService {
         return containerRequestRepository.findAll();
     }
 
-    // 8. Request container
+    // 8. Request container - Faisal
     public void addContainerRequest(Integer userId, ContainerRequest containerRequest) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -90,7 +90,7 @@ public class ContainerRequestService {
         containerRequestRepository.delete(containerRequest);
     }
 
-    // 9. Get container request by ID
+    // 9. Get container request by ID - Faisal
     public ContainerRequest getContainerRequestById(Integer id) {
         ContainerRequest request = containerRequestRepository.findContainerRequestById(id);
         if (request == null) {
@@ -99,7 +99,7 @@ public class ContainerRequestService {
         return request;
     }
 
-    // 10. Request container replacement
+    // 10. Request container replacement - Faisal
     public void requestContainerReplacement(Integer userId, String issueNotes) {
         User user = userRepository.findUserById(userId);
         if (user == null)
@@ -132,7 +132,7 @@ public class ContainerRequestService {
         containerRequestRepository.save(replaceRequest);
     }
 
-    // 11. Process container replacement (accept/reject)
+    // 11. Process container replacement (accept/reject) - Faisal
     public void processReplaceRequest(Integer requestId, Boolean accepted) {
         ContainerRequest request = containerRequestRepository.findContainerRequestById(requestId);
         if (request == null)
@@ -168,7 +168,7 @@ public class ContainerRequestService {
     }
 
 
-    // 12. Accept container request
+    // 12. Accept container request - Faisal
     public void acceptContainerRequest(Integer containerRequestId, Integer collectorId) {
         ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
         if (containerRequest == null)
@@ -201,7 +201,7 @@ public class ContainerRequestService {
         sendWhatsAppMessage(user.getPhone_number(), message);
     }
 
-    // 13. Deliver Container
+    // 13. Deliver Container - Abeer
     public void deliverContainer(Integer collectorId, Integer containerRequestId) {
         ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
         if (containerRequest == null)
@@ -233,7 +233,7 @@ public class ContainerRequestService {
         sendEmailToUser(user.getId(), subject, body, from);
     }
 
-    // 14. Get requests by status
+    // 14. Get requests by status - Abeer
     public List<ContainerRequest> getRequestsByStatus(String status) {
         List<String> validStatuses = List.of("pending", "processing", "delivered");
         if (!validStatuses.contains(status.toLowerCase())) {
@@ -242,7 +242,7 @@ public class ContainerRequestService {
         return containerRequestRepository.findAllByStatusIgnoreCase(status);
     }
 
-    // 15. Get requests by collector ID
+    // 15. Get requests by collector ID - Faisal
     public List<ContainerRequest> getRequestsByCollectorId(Integer collectorId) {
         Collector collector = collectorRepository.findCollectorById(collectorId);
         if (collector == null)
@@ -250,7 +250,7 @@ public class ContainerRequestService {
         return containerRequestRepository.findAllByCollector(collector);
     }
 
-    // 16. Notify user about the container request by email
+    // 16. Notify user about the container request by email - Faisal
     public void sendEmailToUser(Integer userId, String subject, String body, String from) {
         User user = userRepository.findUserById(userId);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -261,7 +261,7 @@ public class ContainerRequestService {
         mailSender.send(message);
     }
 
-    // 17. Send accept notification through Whatsapp
+    // 17. Send accept notification through Whatsapp - Faisal
     public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
         Twilio.init(twilioSid, twilioToken);
         phoneNumber = "+966" + phoneNumber.substring(1);

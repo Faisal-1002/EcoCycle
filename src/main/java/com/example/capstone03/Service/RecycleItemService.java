@@ -26,7 +26,7 @@ public class RecycleItemService {
         return recycleItemRepository.findAll();
     }
 
-    // 26. Add items to pick up request
+    // 26. Add items to pick up request - Abeer
     public void addRecycleItemToPickupRequest(Integer pickupRequestId, RecycleItem recycleItem) {
         PickupRequest pickupRequest = pickupRequestRepository.findPickupRequestById(pickupRequestId);
         if (pickupRequest == null){
@@ -62,7 +62,7 @@ public class RecycleItemService {
         recycleItemRepository.delete(recycleItem);
     }
 
-    // 27. get by ID
+    // 27. get by ID - Abeer
     public RecycleItem getRecycleItemById(Integer id) {
         RecycleItem recycleItem = recycleItemRepository.findRecycleItemById(id);
         if (recycleItem == null) {
@@ -71,7 +71,7 @@ public class RecycleItemService {
         return recycleItem;
     }
   
-    // 28. User can view points history
+    // 28. User can view points history - Abeer
     public PointsDTO getPointsHistory(Integer userId) {
         List<RecycleItem> items = recycleItemRepository.findRecycleItemsByUserId(userId);
 

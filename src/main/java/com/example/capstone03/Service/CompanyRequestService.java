@@ -42,7 +42,7 @@ public class CompanyRequestService {
         return companyRequestRepository.findAll();
     }
 
-    // 29. Add company request
+    // 29. Add company request - Abdulraouf
     public void addCompanyRequest(Integer recyclingCompanyId,CompanyRequest companyRequest){
         RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(recyclingCompanyId);
 
@@ -82,7 +82,7 @@ public class CompanyRequestService {
         companyRequestRepository.delete(companyRequest);
     }
 
-    // 30. View pending company requests
+    // 30. View pending company requests - Abdulraouf
     public List<CompanyRequest> pendingRequests(){
         List<CompanyRequest> requests = companyRequestRepository.findAll();
         List<CompanyRequest> pendingRequest = new ArrayList<>();
@@ -95,7 +95,7 @@ public class CompanyRequestService {
         return pendingRequest;
     }
 
-    // 31. Accept company delivery request
+    // 31. Accept company delivery request - Abdulraouf
     public void acceptCompanyRequest(Integer companyRequestId, Integer collectorId){
         CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -121,7 +121,7 @@ public class CompanyRequestService {
         sendWhatsAppMessage(companyRequest.getRecycling_company().getPhone_number(), message);
     }
 
-    // 32. Delivery
+    // 32. Delivery - Abdulraouf
     public void deliverRequest(Integer companyRequestId, Integer collectorId){
         CompanyRequest companyRequest = companyRequestRepository.findCompanyRequestById(companyRequestId);
         Collector collector = collectorRepository.findCollectorById(collectorId);
@@ -175,7 +175,7 @@ public class CompanyRequestService {
 
     }
 
-    // 33. View completed delivery history
+    // 33. View completed delivery history - Abdulraouf
     public List<CompanyRequest> getDeliveredRequest(){
         List<CompanyRequest> requests = companyRequestRepository.findAll();
         List<CompanyRequest> deliveredRequest = new ArrayList<>();
@@ -189,7 +189,7 @@ public class CompanyRequestService {
         return deliveredRequest;
     }
 
-    // 34. Send email
+    // 34. Send email - Abdulraouf
     public void sendEmailToUser(Integer companyId, String subject, String body, String from) {
         RecyclingCompany recyclingCompany = recyclingCompanyRepository.findRecyclingCompanyById(companyId);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -200,7 +200,7 @@ public class CompanyRequestService {
         mailSender.send(message);
     }
 
-    // 35. send whatsapp
+    // 35. send whatsapp - Abdulraouf
     public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
         Twilio.init(twilioSid, twilioToken);
         phoneNumber = "+966" + phoneNumber.substring(1);
