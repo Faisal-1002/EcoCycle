@@ -17,24 +17,24 @@ public class RecyclingCompanyController {
 
     @GetMapping("/get")
     public ResponseEntity getAllRecyclingCompany(){
-        return ResponseEntity.ok(recyclingCompanyService.getAllRecyclingCompany());
+        return ResponseEntity.status(200).body(recyclingCompanyService.getAllRecyclingCompany());
 
     }
     @PostMapping("/add")
     public ResponseEntity addRecyclingCompany(@RequestBody @Valid RecyclingCompany recyclingCompany){
         recyclingCompanyService.addRecyclingCompany(recyclingCompany);
-        return ResponseEntity.ok(new ApiResponse("added successfully"));
+        return ResponseEntity.status(200).body(new ApiResponse("added successfully"));
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity updateCoffee(@PathVariable Integer id, @RequestBody @Valid RecyclingCompany recyclingCompany){
         recyclingCompanyService.updateRecyclingCompany(id, recyclingCompany);
-        return ResponseEntity.ok(new ApiResponse("update successfully"));
+        return ResponseEntity.status(200).body(new ApiResponse("updated successfully"));
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity deleteCoffee(@PathVariable Integer id){
         recyclingCompanyService.deleteRecyclingCompany(id);
-        return ResponseEntity.ok(new ApiResponse("delete successfully"));
+        return ResponseEntity.status(200).body(new ApiResponse("deleted successfully"));
     }
 }
