@@ -54,7 +54,7 @@ public class PickupRequestController {
 
     @GetMapping("/assigned/{collectorId}")
     public ResponseEntity getAssignedPickupRequests(@PathVariable Integer collectorId) {
-        return ResponseEntity.ok(pickupRequestService.getAssignedPickupRequests(collectorId));
+        return ResponseEntity.status(200).body(pickupRequestService.getAssignedPickupRequests(collectorId));
     }
 
     @PutMapping("/pickedUp-request/{pickedUpId}/collector/{collectorId}")
