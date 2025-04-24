@@ -182,6 +182,10 @@ public class PickupRequestService {
         if (collector == null){
             throw new ApiException("Collector not found");
         }
+        List<RecycleItem> recycleItems = pickupRequest.getRecycle_items();
+        if (recycleItems.isEmpty())
+            throw new ApiException("Recycle Items are empty");
+
         if (!collector.getId().equals(pickupRequest.getCollector().getId())){
             throw new ApiException("Collector is not allowed to deliver");
         }
