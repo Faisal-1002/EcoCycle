@@ -27,10 +27,9 @@ public class Container {
     @Column(columnDefinition = "varchar(100) not null")
     private String location;
 
-    @NotNull(message = "Status condition must not be null")
     @Pattern(regexp = "new|damaged", message = "Status condition must be new or damaged")
-    @Column(columnDefinition = "varchar(20) not null")
-    private String status_condition;
+    @Column(columnDefinition = "varchar(20)")
+    private String status_condition = "new";
 
     @OneToMany(mappedBy = "container")
     @JsonIgnore

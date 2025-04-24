@@ -26,6 +26,7 @@ public class ContainerService {
             throw new ApiException("Invalid status condition. Must be 'new'");
         }
         container.setAvailable(true);
+        container.setStatus_condition("new");
         containerRepository.save(container);
     }
 
