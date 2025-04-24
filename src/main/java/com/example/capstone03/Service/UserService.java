@@ -50,7 +50,7 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    // 1. Get user by ID
+    // 1. Get user by ID - Faisal
     public User getUserById(Integer id) {
         User user = userRepository.findUserById(id);
         if (user == null) {
@@ -60,7 +60,7 @@ public class UserService {
         return user;
     }
 
-    // 2. Get all container requests by user ID
+    // 2. Get all container requests by user ID - Faisal
     public List<ContainerRequest> getRequestsByUserId(Integer userId) {
         User user = userRepository.findUserById(userId);
         if (user == null) throw new ApiException("User not found");

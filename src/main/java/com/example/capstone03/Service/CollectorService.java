@@ -52,7 +52,7 @@ public class CollectorService {
         collectorRepository.delete(collector);
     }
 
-    // 5. Get by ID
+    // 5. Get by ID - Faisal
     public Collector getCollectorById(Integer id) {
         if (collectorRepository.findCollectorById(id) == null) {
             throw new ApiException("Collector not found");
@@ -60,7 +60,7 @@ public class CollectorService {
         return collectorRepository.findCollectorById(id);
     }
 
-    // 6. Get assigned container requests for a collector
+    // 6. Get assigned container requests for a collector - Abeer
     public List<ContainerRequest> getAssignedContainerRequests(Integer collectorId) {
         Collector collector = collectorRepository.findCollectorById(collectorId);
         if (collector == null) {
@@ -70,7 +70,7 @@ public class CollectorService {
         return containerRequestRepository.findAllByCollector(collector);
     }
 
-    // 7. Get assigned pickup requests for a collector
+    // 7. Get assigned pickup requests for a collector - Abeer
     public List<PickupRequest> getAssignedPickupRequests(Integer collectorId) {
         Collector collector = collectorRepository.findCollectorById(collectorId);
         if (collector == null) {

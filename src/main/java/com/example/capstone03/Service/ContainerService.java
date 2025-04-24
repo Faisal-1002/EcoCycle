@@ -51,7 +51,7 @@ public class ContainerService {
         containerRepository.delete(container);
     }
 
-    // 3. Get container by ID
+    // 3. Get container by ID - Abeer
     public Container getContainerById(Integer id) {
         Container container = containerRepository.findContainerById(id);
         if (container == null) {
@@ -60,7 +60,7 @@ public class ContainerService {
         return container;
     }
 
-    // 4. Get all available containers
+    // 4. Get all available containers - Faisal
     public List<Container> getAvailableContainers() {
         return containerRepository.findAllByAvailableTrue();
     }
