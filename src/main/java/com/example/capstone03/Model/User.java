@@ -1,5 +1,6 @@
 package com.example.capstone03.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -40,11 +41,12 @@ public class User {
     private String phone_number;
 
     @Column(columnDefinition = "int")
-    private Integer points;
+    private Double points;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<ContainerRequest> containerRequests;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<PickupRequest> pickupRequests;
+
 }

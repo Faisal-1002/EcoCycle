@@ -9,8 +9,6 @@ import com.example.capstone03.Repository.CollectorRepository;
 import com.example.capstone03.Repository.ContainerRepository;
 import com.example.capstone03.Repository.ContainerRequestRepository;
 import com.example.capstone03.Repository.UserRepository;
-//import com.twilio.Twilio;
-//import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import lombok.RequiredArgsConstructor;
@@ -44,7 +42,7 @@ public class ContainerRequestService {
         return containerRequestRepository.findAll();
     }
 
-    // 7. Request container
+    // 8. Request container
     public void addContainerRequest(Integer userId, ContainerRequest containerRequest) {
         User user = userRepository.findUserById(userId);
         if (user == null) {
@@ -92,7 +90,7 @@ public class ContainerRequestService {
         containerRequestRepository.delete(containerRequest);
     }
 
-    // 8. Get container request by ID
+    // 9. Get container request by ID
     public ContainerRequest getContainerRequestById(Integer id) {
         ContainerRequest request = containerRequestRepository.findContainerRequestById(id);
         if (request == null) {
@@ -101,7 +99,7 @@ public class ContainerRequestService {
         return request;
     }
 
-    // 21. Request container replacement
+    // 10. Request container replacement
     public void requestContainerReplacement(Integer userId, String issueNotes) {
         User user = userRepository.findUserById(userId);
         if (user == null)
@@ -134,7 +132,7 @@ public class ContainerRequestService {
         containerRequestRepository.save(replaceRequest);
     }
 
-    // 22. Process container replacement (accept/reject)
+    // 11. Process container replacement (accept/reject)
     public void processReplaceRequest(Integer requestId, Boolean accepted) {
         ContainerRequest request = containerRequestRepository.findContainerRequestById(requestId);
         if (request == null)
@@ -164,13 +162,13 @@ public class ContainerRequestService {
                 containerRequestRepository.save(r);
             }
         }
-
+        request.setDelivery_date(LocalDate.now().plusWeeks(1));
         request.setStatus("replaced");
         containerRequestRepository.save(request);
     }
 
 
-    // 10. Accept container request
+    // 12. Accept container request
     public void acceptContainerRequest(Integer containerRequestId, Integer collectorId) {
         ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
         if (containerRequest == null)
@@ -203,7 +201,7 @@ public class ContainerRequestService {
         sendWhatsAppMessage(user.getPhone_number(), message);
     }
 
-    // 11. Deliver Container
+    // 13. Deliver Container
     public void deliverContainer(Integer collectorId, Integer containerRequestId) {
         ContainerRequest containerRequest = containerRequestRepository.findContainerRequestById(containerRequestId);
         if (containerRequest == null)
@@ -235,7 +233,7 @@ public class ContainerRequestService {
         sendEmailToUser(user.getId(), subject, body, from);
     }
 
-    // 12. Get requests by status
+    // 14. Get requests by status
     public List<ContainerRequest> getRequestsByStatus(String status) {
         List<String> validStatuses = List.of("pending", "processing", "delivered");
         if (!validStatuses.contains(status.toLowerCase())) {
@@ -244,7 +242,7 @@ public class ContainerRequestService {
         return containerRequestRepository.findAllByStatusIgnoreCase(status);
     }
 
-    // 13. Get requests by collector ID
+    // 15. Get requests by collector ID
     public List<ContainerRequest> getRequestsByCollectorId(Integer collectorId) {
         Collector collector = collectorRepository.findCollectorById(collectorId);
         if (collector == null)
@@ -252,7 +250,7 @@ public class ContainerRequestService {
         return containerRequestRepository.findAllByCollector(collector);
     }
 
-    // 14. Notify user about the container request by email
+    // 16. Notify user about the container request by email
     public void sendEmailToUser(Integer userId, String subject, String body, String from) {
         User user = userRepository.findUserById(userId);
         SimpleMailMessage message = new SimpleMailMessage();
@@ -263,7 +261,7 @@ public class ContainerRequestService {
         mailSender.send(message);
     }
 
-    // 15. Send accept notification through Whatsapp
+    // 17. Send accept notification through Whatsapp
     public void sendWhatsAppMessage(String phoneNumber, String messageBody) {
         Twilio.init(twilioSid, twilioToken);
         phoneNumber = "+966" + phoneNumber.substring(1);

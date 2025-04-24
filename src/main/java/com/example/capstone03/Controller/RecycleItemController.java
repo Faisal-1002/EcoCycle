@@ -21,15 +21,9 @@ public class RecycleItemController {
     }
 
     @PostMapping("/add/{pickupRequestId}")
-    public ResponseEntity<?> addRecycleItem(@PathVariable Integer pickupRequestId, @RequestBody @Valid RecycleItem recycleItem) {
-        recycleItemService.addRecycleItem(pickupRequestId, recycleItem);
-        return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully"));
-    }
-
-    @PostMapping("/add-point/{pickupRequestId}")
     public ResponseEntity addRecycleItemToPickupRequest(@PathVariable Integer pickupRequestId,@RequestBody @Valid  RecycleItem recycleItem) {
         recycleItemService.addRecycleItemToPickupRequest(pickupRequestId,recycleItem);
-        return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully and get points"));
+        return ResponseEntity.status(200).body(new ApiResponse("Recycle item added successfully"));
     }
 
     @PutMapping("/update/{id}")
@@ -49,11 +43,9 @@ public class RecycleItemController {
         return ResponseEntity.status(200).body(recycleItemService.getRecycleItemById(id));
     }
 
-    //endpoint 12 - User can view points history
     @GetMapping("/get-point/{userId}")
-    public ResponseEntity getPointsHistory(@PathVariable Integer userId) {
-        return ResponseEntity.ok(recycleItemService.getPointsHistory(userId));
+    public ResponseEntity<?> getPointsHistory(@PathVariable Integer userId) {
+        return ResponseEntity.status(200).body(recycleItemService.getPointsHistory(userId));
     }
-
 
 }

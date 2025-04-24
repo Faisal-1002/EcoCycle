@@ -22,7 +22,7 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(pickupRequestService.getAllPickupRequests());
     }
 
-    @PostMapping("/add/{userId}")
+    @PostMapping("/add/user-id/{userId}")
     public ResponseEntity<?> addPickupRequest(@PathVariable Integer userId, @RequestBody @Valid PickupRequest pickupRequest) {
         pickupRequestService.addPickupRequest(userId,pickupRequest);
         return ResponseEntity.status(200).body(new ApiResponse("Pickup request added successfully"));
@@ -45,7 +45,7 @@ public class PickupRequestController {
         return ResponseEntity.status(200).body(pickupRequestService.getPickupRequestById(id));
     }
 
-    @PutMapping("/accept-pickup/{pickupRequestId}/{collectorId}")
+    @PutMapping("/accept-pickup/pickup-id/{pickupRequestId}/collector-id/{collectorId}")
     public ResponseEntity<?> acceptPickupRequest(@PathVariable Integer pickupRequestId,
                                                  @PathVariable Integer collectorId) {
         pickupRequestService.acceptPickupRequest(pickupRequestId, collectorId);
@@ -57,22 +57,9 @@ public class PickupRequestController {
         return ResponseEntity.ok(pickupRequestService.getAssignedPickupRequests(collectorId));
     }
 
-   @PostMapping("/notify/{userId}")
-    public ResponseEntity<String> notifyPickupCompleted(@PathVariable Integer userId) {
-        try {
-            pickupRequestService.sendPickupNotification(userId);
-            return ResponseEntity.ok("Pickup notification sent successfully.");
-        } catch (ApiException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Something went wrong.");
-        }
-    }
-
     @PutMapping("/pickedUp-request/{pickedUpId}/collector/{collectorId}")
     public ResponseEntity<ApiResponse> deliverRecyclingCompanyRequest(@PathVariable Integer pickedUpId,@PathVariable Integer collectorId) {
         pickupRequestService.pickedUpRequest(pickedUpId,collectorId);
         return ResponseEntity.status(200).body(new ApiResponse("pickup request been picked up"));
     }
-
 }
