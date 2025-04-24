@@ -1,6 +1,6 @@
 ### Faisal's Custom Endpoints
 
-| #  | Endpoint                                | Author  |
+| #  | Endpoint Description                     | Author  |
 |----|------------------------------------------|---------|
 | 1  | Get user by ID                           | Faisal  |
 | 2  | Get all container requests by user ID    | Faisal  |
